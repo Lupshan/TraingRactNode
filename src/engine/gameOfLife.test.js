@@ -157,3 +157,46 @@ describe('nextGeneration — patterns de référence (B3/S23)', () => {
     expect(patternFromGrid(grid)).toBe(patternFromGrid(expected))
   })
 })
+
+describe('nextGeneration — paramètre rules', () => {
+  it('utilise DEFAULT_RULES quand rules est omis', () => {
+    const grid = gridFromPattern(`
+      ....
+      .##.
+      .##.
+      ....
+    `)
+
+    expect(patternFromGrid(nextGeneration(grid))).toBe(
+      patternFromGrid(nextGeneration(grid, DEFAULT_RULES)),
+    )
+  })
+
+  it('applique une règle de naissance différente de B3/S23', () => {
+    const grid = gridFromPattern(`
+      ##.
+      ...
+      ...
+    `)
+    const customRules = { birth: new Set([2]), survive: new Set([2, 3]) }
+
+    // (1,0) a 2 voisins vivants : morte sous B3 (naissance à 3 uniquement)
+    expect(nextGeneration(grid, DEFAULT_RULES)[1][0]).toBe(false)
+    // ... mais naît sous une règle où la naissance inclut 2
+    expect(nextGeneration(grid, customRules)[1][0]).toBe(true)
+  })
+
+  it('applique une règle de survie différente de B3/S23', () => {
+    const grid = gridFromPattern(`
+      ###
+      ...
+      ...
+    `)
+    const customRules = { birth: new Set([3]), survive: new Set([3]) }
+
+    // (0,1) a 2 voisins vivants : survit sous S23
+    expect(nextGeneration(grid, DEFAULT_RULES)[0][1]).toBe(true)
+    // ... mais meurt sous une règle où la survie n'inclut pas 2
+    expect(nextGeneration(grid, customRules)[0][1]).toBe(false)
+  })
+})
