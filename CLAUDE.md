@@ -16,6 +16,7 @@ Simulateur du Jeu de la Vie de Conway en React, avec deux axes différenciants p
 - **Framework UI** : React
 - **Rendu de la grille** : Canvas (API 2D context) — un seul élément `<canvas>`, dessin via `fillRect`, pas de nœud DOM par cellule
 - **Backend** : aucun pour le moment. Node.js est réservé à une évolution future (voir Roadmap)
+- **Déploiement** : Cloudflare Pages
 
 ## Scope V1 (2D uniquement)
 
@@ -25,7 +26,8 @@ Simulateur du Jeu de la Vie de Conway en React, avec deux axes différenciants p
 - Contrôles de simulation : start / pause / step (avancer d'une génération) / reset / réglage de la vitesse
 - Édition manuelle de la grille : clic sur une cellule pour l'activer/désactiver (à l'arrêt ou en pause)
 - Panneau de règles : paramétrage du nombre de voisins pour naissance et survie (notation B/S, ex. `B3/S23` pour le jeu de la vie classique), appliqué dès la génération suivante sans interruption ni reload
-- Comportement des bords de grille (torique ou bords morts) : à trancher au moment de l'implémentation du moteur
+- Comportement des bords de grille : bords morts (les cellules hors grille sont considérées mortes, pas de rebouclage torique)
+- Taille de la grille (dimensions logiques, nombre de lignes/colonnes) configurable — **distincte** de la taille d'affichage (taille du canvas à l'écran / taille des cellules en pixels) : une grille de 50×50 peut être affichée en petit ou en grand sans changer le nombre de cellules simulées
 
 ## Hors scope V1 (roadmap)
 
