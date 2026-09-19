@@ -4,9 +4,9 @@ Suivi des tâches nécessaires pour livrer la V1 (2D uniquement, cf. [`CLAUDE.md
 
 | # | Tâche | Statut |
 |---|-------|--------|
-| [00](./00-scaffolding-projet.md) | Initialisation du projet (scaffolding) | À faire |
-| [01](./01-ci-de-base.md) | CI de base | À faire |
-| [02](./02-composants-et-tests.md) | Composants de la V1 + tests | À faire |
+| [00](./00-scaffolding-projet.md) | Initialisation du projet (scaffolding) | Fait |
+| [01](./01-ci-de-base.md) | CI de base | Fait |
+| [02](./02-composants-et-tests.md) | Composants de la V1 + tests | Fait |
 | [03](./03-regles-classiques.md) | Règles classiques du jeu de la vie | À faire |
 | [04](./04-regles-temps-reel.md) | Modification des règles en temps réel | À faire |
 | [05](./05-cd-deploiement.md) | CD et déploiement V1 | À faire |
