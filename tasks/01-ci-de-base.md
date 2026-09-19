@@ -4,12 +4,12 @@ Objectif : mettre en place un pipeline minimal qui tourne sur chaque PR, à enri
 
 ## À faire
 
-- [ ] Workflow GitHub Actions (`.github/workflows/ci.yml`) déclenché sur push et PR vers `main`
-- [ ] Étape d'installation des dépendances (avec cache npm)
-- [ ] Étape de lint (ESLint)
-- [ ] Étape de build (`npm run build`) pour détecter les erreurs de compilation
-- [ ] Étape de test (`npm test`) — même avec un test placeholder au départ, prête à accueillir les tests des tâches 02, 03, 04
-- [ ] Une fois la CI stable : activer la protection de branche sur `main` (CI obligatoire avant merge)
+- [x] Workflow GitHub Actions (`.github/workflows/ci.yml`) déclenché sur push et PR vers `main`
+- [x] Étape d'installation des dépendances (avec cache npm)
+- [x] Étape de lint (ESLint)
+- [x] Étape de build (`npm run build`) pour détecter les erreurs de compilation
+- [x] Étape de test (`npm test`) — même avec un test placeholder au départ, prête à accueillir les tests des tâches 02, 03, 04
+- [x] Une fois la CI stable : activer la protection de branche sur `main` (CI obligatoire avant merge)
 
 ## Definition of done
 

@@ -4,15 +4,15 @@
 
 ## À faire
 
-- [ ] Initialiser le projet avec Vite (template `react`, JavaScript — pas de TypeScript, cf. `CLAUDE.md`)
-- [ ] Structure de dossiers de base :
+- [x] Initialiser le projet avec Vite (template `react`, JavaScript — pas de TypeScript, cf. `CLAUDE.md`)
+- [x] Structure de dossiers de base :
   - `src/components/` — composants React (Grid, Controls, RulesPanel, ...)
   - `src/engine/` — logique pure du jeu de la vie (pas de dépendance React, facilement testable)
   - `src/hooks/` — hooks custom si besoin (ex. boucle de simulation)
-- [ ] ESLint + Prettier (config minimale cohérente JS/React)
-- [ ] `.gitignore` (`node_modules`, `dist`, etc.)
-- [ ] Choisir et installer le framework de test — Vitest + React Testing Library (cohérent avec Vite, pas besoin d'outil supplémentaire type Jest)
-- [ ] Vérifier que `npm run dev`, `npm run build` et `npm run test` fonctionnent (même avec un test placeholder)
+- [x] ESLint + Prettier (config minimale cohérente JS/React)
+- [x] `.gitignore` (`node_modules`, `dist`, etc.)
+- [x] Choisir et installer le framework de test — Vitest + React Testing Library (cohérent avec Vite, pas besoin d'outil supplémentaire type Jest)
+- [x] Vérifier que `npm run dev`, `npm run build` et `npm run test` fonctionnent (même avec un test placeholder)
 
 ## Definition of done
 
