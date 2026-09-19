@@ -13,7 +13,7 @@ export default defineConfig({
       reporter: ['text', 'html'],
       all: true,
       include: ['src/**/*.{js,jsx}'],
-      exclude: ['src/main.jsx', 'src/__tests__/**', '**/*.test.{js,jsx}'],
+      exclude: ['src/main.jsx', 'src/__tests__/**'],
       thresholds: {
         lines: 80,
         functions: 80,

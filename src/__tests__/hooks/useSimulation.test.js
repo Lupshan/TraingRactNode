@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { vi } from 'vitest'
-import { useSimulation } from './useSimulation'
+import { useSimulation } from '../../hooks/useSimulation'
 
 describe('useSimulation', () => {
   beforeEach(() => {

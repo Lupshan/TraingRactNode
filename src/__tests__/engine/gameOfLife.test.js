@@ -5,7 +5,7 @@ import {
   DEFAULT_RULES,
   nextGeneration,
   toggleCellEngine,
-} from './gameOfLife'
+} from '../../engine/gameOfLife'
 
 function gridFromPattern(pattern) {
   return pattern
