@@ -3,7 +3,7 @@ import {
   createEmptyGrid,
   DEFAULT_RULES,
   nextGeneration,
-  toggleCell as toggleCellInGrid,
+  toggleCellEngine,
 } from '../engine/gameOfLife'
 
 const DEFAULT_ROWS = 30
@@ -51,7 +51,7 @@ export function useSimulation({
   const toggleCell = useCallback(
     (row, col) => {
       if (running) return
-      setGrid((current) => toggleCellInGrid(current, row, col))
+      setGrid((current) => toggleCellEngine(current, row, col))
     },
     [running],
   )
