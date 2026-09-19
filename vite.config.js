@@ -6,14 +6,14 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
-    setupFiles: './src/setupTests.js',
+    setupFiles: './src/__tests__/setupTests.js',
     globals: true,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
       all: true,
       include: ['src/**/*.{js,jsx}'],
-      exclude: ['src/main.jsx', 'src/setupTests.js', '**/*.test.{js,jsx}'],
+      exclude: ['src/main.jsx', 'src/__tests__/**', '**/*.test.{js,jsx}'],
       thresholds: {
         lines: 80,
         functions: 80,

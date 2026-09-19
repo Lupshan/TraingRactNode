@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import GridSettings from './GridSettings'
+import GridSettings from '../../components/GridSettings'
 
 function renderGridSettings(overrides = {}) {
   const props = {

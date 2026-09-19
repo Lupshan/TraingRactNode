@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import RulesPanel from './RulesPanel'
+import RulesPanel from '../../components/RulesPanel'
 
 function renderRulesPanel(rules) {
   const onChange = vi.fn()

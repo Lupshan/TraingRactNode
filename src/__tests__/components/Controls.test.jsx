@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import Controls from './Controls'
+import Controls from '../../components/Controls'
 
 function renderControls(overrides = {}) {
   const props = {
