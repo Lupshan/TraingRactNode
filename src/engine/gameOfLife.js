@@ -7,7 +7,7 @@ export function createEmptyGrid(rows, cols) {
   return Array.from({ length: rows }, () => new Array(cols).fill(false))
 }
 
-export function toggleCell(grid, row, col) {
+export function toggleCellEngine(grid, row, col) {
   return grid.map((rowCells, r) =>
     r === row ? rowCells.map((cell, c) => (c === col ? !cell : cell)) : rowCells,
   )

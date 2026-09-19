@@ -4,7 +4,7 @@ import {
   createEmptyGrid,
   DEFAULT_RULES,
   nextGeneration,
-  toggleCell,
+  toggleCellEngine,
 } from './gameOfLife'
 
 function gridFromPattern(pattern) {
@@ -28,10 +28,10 @@ describe('createEmptyGrid', () => {
   })
 })
 
-describe('toggleCell', () => {
+describe('toggleCellEngine', () => {
   it('flips only the targeted cell', () => {
     const grid = createEmptyGrid(2, 2)
-    const next = toggleCell(grid, 0, 1)
+    const next = toggleCellEngine(grid, 0, 1)
 
     expect(next[0][1]).toBe(true)
     expect(next[0][0]).toBe(false)
@@ -40,14 +40,14 @@ describe('toggleCell', () => {
 
   it('does not mutate the original grid', () => {
     const grid = createEmptyGrid(2, 2)
-    toggleCell(grid, 0, 0)
+    toggleCellEngine(grid, 0, 0)
 
     expect(grid[0][0]).toBe(false)
   })
 
   it('toggling twice returns to dead', () => {
     const grid = createEmptyGrid(2, 2)
-    const next = toggleCell(toggleCell(grid, 0, 0), 0, 0)
+    const next = toggleCellEngine(toggleCellEngine(grid, 0, 0), 0, 0)
 
     expect(next[0][0]).toBe(false)
   })
