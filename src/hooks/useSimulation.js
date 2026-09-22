@@ -4,6 +4,7 @@ import {
   DEFAULT_RULES,
   nextGeneration,
   setCellEngine,
+  stampPatternEngine,
   toggleCellEngine,
 } from '../engine/gameOfLife'
 
@@ -72,6 +73,14 @@ export function useSimulation({
     [running],
   )
 
+  const stampPattern = useCallback(
+    (row, col, pattern) => {
+      if (running) return
+      setGrid((current) => stampPatternEngine(current, row, col, pattern))
+    },
+    [running],
+  )
+
   return {
     grid,
     generation,
@@ -85,6 +94,7 @@ export function useSimulation({
     resizeGrid,
     toggleCell,
     setCell,
+    stampPattern,
     setRules,
     setSpeed,
   }

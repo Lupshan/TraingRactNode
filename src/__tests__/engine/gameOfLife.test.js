@@ -5,6 +5,7 @@ import {
   DEFAULT_RULES,
   nextGeneration,
   setCellEngine,
+  stampPatternEngine,
   toggleCellEngine,
 } from '../../engine/gameOfLife'
 
@@ -76,6 +77,51 @@ describe('setCellEngine', () => {
     const next = setCellEngine(setCellEngine(grid, 0, 0, true), 0, 0, true)
 
     expect(next[0][0]).toBe(true)
+  })
+})
+
+describe('stampPatternEngine', () => {
+  it('places the pattern with its top-left corner at (row, col)', () => {
+    const grid = createEmptyGrid(4, 4)
+    const pattern = [
+      [true, false],
+      [false, true],
+    ]
+    const next = stampPatternEngine(grid, 1, 1, pattern)
+
+    expect(next[1][1]).toBe(true)
+    expect(next[1][2]).toBe(false)
+    expect(next[2][1]).toBe(false)
+    expect(next[2][2]).toBe(true)
+    expect(next.flat().filter(Boolean)).toHaveLength(2)
+  })
+
+  it('combines with existing live cells instead of replacing them (OR)', () => {
+    const grid = toggleCellEngine(createEmptyGrid(3, 3), 0, 0)
+    const pattern = [[true]]
+    const next = stampPatternEngine(grid, 1, 1, pattern)
+
+    expect(next[0][0]).toBe(true)
+    expect(next[1][1]).toBe(true)
+  })
+
+  it('ignores pattern cells that fall outside the grid bounds', () => {
+    const grid = createEmptyGrid(2, 2)
+    const pattern = [
+      [true, true],
+      [true, true],
+    ]
+    const next = stampPatternEngine(grid, 1, 1, pattern)
+
+    expect(next[1][1]).toBe(true)
+    expect(next.flat().filter(Boolean)).toHaveLength(1)
+  })
+
+  it('does not mutate the original grid', () => {
+    const grid = createEmptyGrid(2, 2)
+    stampPatternEngine(grid, 0, 0, [[true]])
+
+    expect(grid[0][0]).toBe(false)
   })
 })
 

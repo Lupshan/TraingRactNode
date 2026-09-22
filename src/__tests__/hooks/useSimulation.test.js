@@ -58,6 +58,24 @@ describe('useSimulation', () => {
     expect(result.current.grid[0][0]).toBe(false)
   })
 
+  it('stampPattern places a pattern OR-ed onto the grid when the simulation is stopped', () => {
+    const { result } = renderHook(() => useSimulation({ rows: 4, cols: 4 }))
+
+    act(() => result.current.stampPattern(1, 1, [[true, true]]))
+
+    expect(result.current.grid[1][1]).toBe(true)
+    expect(result.current.grid[1][2]).toBe(true)
+  })
+
+  it('stampPattern is a no-op while running', () => {
+    const { result } = renderHook(() => useSimulation({ rows: 4, cols: 4 }))
+
+    act(() => result.current.start())
+    act(() => result.current.stampPattern(0, 0, [[true]]))
+
+    expect(result.current.grid[0][0]).toBe(false)
+  })
+
   it('step advances exactly one generation', () => {
     const { result } = renderHook(() => useSimulation({ rows: 2, cols: 2 }))
 

@@ -19,6 +19,28 @@ export function setCellEngine(grid, row, col, alive) {
   )
 }
 
+// Pose un motif sur la grille, coin supérieur gauche en (row, col) ; les
+// cellules du motif sont combinées avec l'état existant (OR), pas
+// remplacées, et celles qui tombent hors grille sont ignorées.
+export function stampPatternEngine(grid, row, col, pattern) {
+  const rows = grid.length
+  const cols = grid[0]?.length ?? 0
+  const next = grid.map((rowCells) => [...rowCells])
+
+  pattern.forEach((patternRow, r) => {
+    patternRow.forEach((alive, c) => {
+      if (!alive) return
+      const targetRow = row + r
+      const targetCol = col + c
+      if (targetRow >= 0 && targetRow < rows && targetCol >= 0 && targetCol < cols) {
+        next[targetRow][targetCol] = true
+      }
+    })
+  })
+
+  return next
+}
+
 export function countLiveNeighbors(grid, row, col) {
   const rows = grid.length
   const cols = grid[0]?.length ?? 0
