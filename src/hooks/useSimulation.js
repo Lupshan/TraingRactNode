@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   createEmptyGrid,
   DEFAULT_RULES,
@@ -21,10 +21,17 @@ export function useSimulation({
   const [rules, setRules] = useState(DEFAULT_RULES)
   const [intervalMs, setSpeed] = useState(speed)
 
-  const step = useCallback(() => {
-    setGrid((current) => nextGeneration(current, rules))
-    setGeneration((gen) => gen + 1)
+  // Lu par step() à chaque tick, pour ne jamais figer les règles actives
+  // au moment où l'intervalle a été programmé (cf. tasks/04).
+  const rulesRef = useRef(rules)
+  useEffect(() => {
+    rulesRef.current = rules
   }, [rules])
+
+  const step = useCallback(() => {
+    setGrid((current) => nextGeneration(current, rulesRef.current))
+    setGeneration((gen) => gen + 1)
+  }, [])
 
   useEffect(() => {
     if (!running) return undefined

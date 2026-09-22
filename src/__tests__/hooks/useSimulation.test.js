@@ -100,4 +100,27 @@ describe('useSimulation', () => {
 
     expect(result.current.rules).toBe(newRules)
   })
+
+  it('changing rules mid-run does not delay the next tick and applies immediately', () => {
+    const { result } = renderHook(() => useSimulation({ rows: 3, cols: 3, speed: 100 }))
+
+    // (0,0) et (0,1) vivantes -> (1,0) a 2 voisins vivants :
+    // morte sous B3/S23 (défaut), naît sous une règle où B inclut 2
+    act(() => result.current.toggleCell(0, 0))
+    act(() => result.current.toggleCell(0, 1))
+    act(() => result.current.start())
+
+    // change de règle à mi-chemin du premier intervalle (t=60/100)
+    act(() => vi.advanceTimersByTime(60))
+    act(() =>
+      result.current.setRules({ birth: new Set([2]), survive: new Set([2, 3]) }),
+    )
+
+    // si l'intervalle avait redémarré au changement de règle, le tick
+    // suivant tomberait à t=160, pas à t=100 : on n'avance que jusqu'à 100
+    act(() => vi.advanceTimersByTime(40))
+
+    expect(result.current.generation).toBe(1)
+    expect(result.current.grid[1][0]).toBe(true)
+  })
 })
