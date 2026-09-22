@@ -1,52 +1,63 @@
 .app {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 24px 16px;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
 }
 
-.app > h1 {
-  margin: 0;
+.grid-viewport {
+  position: relative;
+  flex: 1;
+  overflow: auto;
+  background: var(--bg);
 }
 
-.layout {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 20px;
-  width: 100%;
-}
-
-.grid-panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
-  line-height: 0;
-}
-
-.grid-panel canvas {
+.grid-viewport canvas {
   display: block;
-  max-width: 100%;
-  height: auto;
-  border-radius: 6px;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
 }
 
 .sidebar {
+  width: 340px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: min(360px, 100%);
+  transition:
+    width 0.15s ease,
+    padding 0.15s ease;
+}
+
+.sidebar-collapsed {
+  width: 0;
+  padding: 0;
+  border-left: none;
+}
+
+.sidebar h1 {
+  margin: 0;
+  font-size: 1.25rem;
 }
 
 .controls,
 .grid-settings,
 .rules-panel {
-  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px;
@@ -67,14 +78,15 @@
   color: var(--text);
 }
 
+.speed-input input {
+  width: 5em;
+}
+
 .grid-settings form {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 10px 14px;
-}
-
-.grid-settings > label {
   width: 100%;
 }
 
@@ -88,7 +100,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px 10px;
+  gap: 6px;
 }
 
 .rules-panel > div > span {
@@ -97,6 +109,22 @@
   width: 100%;
 }
 
-.rules-panel label {
-  font-size: 0.85rem;
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
 }

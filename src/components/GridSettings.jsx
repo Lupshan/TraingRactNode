@@ -1,9 +1,6 @@
 import { useState } from 'react'
 
-const MIN_CELL_SIZE = 4
-const MAX_CELL_SIZE = 40
-
-function GridSettings({ rows, cols, onResizeGrid, cellSize, onCellSizeChange }) {
+function GridSettings({ rows, cols, onResizeGrid }) {
   const [pendingRows, setPendingRows] = useState(rows)
   const [pendingCols, setPendingCols] = useState(cols)
 
@@ -35,17 +32,6 @@ function GridSettings({ rows, cols, onResizeGrid, cellSize, onCellSizeChange }) 
         </label>
         <button type="submit">Redimensionner la grille</button>
       </form>
-
-      <label>
-        Taille d&apos;affichage (px/cellule)
-        <input
-          type="range"
-          min={MIN_CELL_SIZE}
-          max={MAX_CELL_SIZE}
-          value={cellSize}
-          onChange={(event) => onCellSizeChange(Number(event.target.value))}
-        />
-      </label>
     </div>
   )
 }

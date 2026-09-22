@@ -10,21 +10,36 @@ function renderRulesPanel(rules) {
 }
 
 describe('RulesPanel', () => {
-  it('reflects the active rules as checked boxes', () => {
+  it('reflects the active rules as pressed toggle buttons', () => {
     renderRulesPanel({ birth: new Set([3]), survive: new Set([2, 3]) })
 
-    expect(screen.getByLabelText('Naissance à 3 voisins')).toBeChecked()
-    expect(screen.getByLabelText('Naissance à 2 voisins')).not.toBeChecked()
-    expect(screen.getByLabelText('Survie à 2 voisins')).toBeChecked()
-    expect(screen.getByLabelText('Survie à 3 voisins')).toBeChecked()
-    expect(screen.getByLabelText('Survie à 4 voisins')).not.toBeChecked()
+    expect(screen.getByRole('button', { name: 'Naissance à 3 voisins' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(screen.getByRole('button', { name: 'Naissance à 2 voisins' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
+    expect(screen.getByRole('button', { name: 'Survie à 2 voisins' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(screen.getByRole('button', { name: 'Survie à 3 voisins' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(screen.getByRole('button', { name: 'Survie à 4 voisins' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
   })
 
-  it('adds a birth count when checking an unchecked box', async () => {
+  it('adds a birth count when activating an inactive toggle', async () => {
     const user = userEvent.setup()
     const onChange = renderRulesPanel({ birth: new Set([3]), survive: new Set([2, 3]) })
 
-    await user.click(screen.getByLabelText('Naissance à 2 voisins'))
+    await user.click(screen.getByRole('button', { name: 'Naissance à 2 voisins' }))
 
     expect(onChange).toHaveBeenCalledWith({
       birth: new Set([3, 2]),
@@ -32,11 +47,11 @@ describe('RulesPanel', () => {
     })
   })
 
-  it('removes a survive count when unchecking a checked box', async () => {
+  it('removes a survive count when deactivating an active toggle', async () => {
     const user = userEvent.setup()
     const onChange = renderRulesPanel({ birth: new Set([3]), survive: new Set([2, 3]) })
 
-    await user.click(screen.getByLabelText('Survie à 3 voisins'))
+    await user.click(screen.getByRole('button', { name: 'Survie à 3 voisins' }))
 
     expect(onChange).toHaveBeenCalledWith({
       birth: new Set([3]),

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import GridSettings from '../../components/GridSettings'
@@ -8,8 +8,6 @@ function renderGridSettings(overrides = {}) {
     rows: 10,
     cols: 10,
     onResizeGrid: vi.fn(),
-    cellSize: 16,
-    onCellSizeChange: vi.fn(),
     ...overrides,
   }
   render(<GridSettings {...props} />)
@@ -30,15 +28,5 @@ describe('GridSettings', () => {
     await user.click(screen.getByRole('button', { name: /redimensionner/i }))
 
     expect(props.onResizeGrid).toHaveBeenCalledWith(20, 15)
-  })
-
-  it('changing the display size calls onCellSizeChange, not onResizeGrid', () => {
-    const props = renderGridSettings()
-
-    const displaySlider = screen.getByLabelText(/taille d'affichage/i)
-    fireEvent.change(displaySlider, { target: { value: '24' } })
-
-    expect(props.onCellSizeChange).toHaveBeenCalledWith(24)
-    expect(props.onResizeGrid).not.toHaveBeenCalled()
   })
 })

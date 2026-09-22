@@ -22,13 +22,12 @@ function Controls({
       <button type="button" onClick={onReset}>
         Reset
       </button>
-      <label>
+      <label className="speed-input">
         Vitesse (ms/génération)
         <input
-          type="range"
-          min="50"
-          max="1000"
-          step="50"
+          type="number"
+          min="10"
+          step="10"
           value={speed}
           onChange={(event) => onSpeedChange(Number(event.target.value))}
         />
