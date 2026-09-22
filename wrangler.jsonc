@@ -9,9 +9,7 @@
   "kv_namespaces": [
     {
       "binding": "PATTERNS",
-      // TODO(déploiement) : remplacer par l'id réel, obtenu avec
-      // `npx wrangler kv namespace create PATTERNS`
-      "id": "REPLACE_WITH_REAL_KV_NAMESPACE_ID"
+      "id": "e1731051ff094c83a057a9ea83036bd7"
     }
   ]
 }
