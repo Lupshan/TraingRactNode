@@ -39,6 +39,25 @@ describe('useSimulation', () => {
     expect(result.current.grid[0][0]).toBe(false)
   })
 
+  it('setCell sets a cell to the given state when the simulation is stopped', () => {
+    const { result } = renderHook(() => useSimulation({ rows: 2, cols: 2 }))
+
+    act(() => result.current.setCell(0, 1, true))
+    expect(result.current.grid[0][1]).toBe(true)
+
+    act(() => result.current.setCell(0, 1, false))
+    expect(result.current.grid[0][1]).toBe(false)
+  })
+
+  it('setCell is a no-op while running', () => {
+    const { result } = renderHook(() => useSimulation({ rows: 2, cols: 2 }))
+
+    act(() => result.current.start())
+    act(() => result.current.setCell(0, 0, true))
+
+    expect(result.current.grid[0][0]).toBe(false)
+  })
+
   it('step advances exactly one generation', () => {
     const { result } = renderHook(() => useSimulation({ rows: 2, cols: 2 }))
 
