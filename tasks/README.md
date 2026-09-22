@@ -16,6 +16,7 @@ Suivi des tâches nécessaires pour livrer la V1 (2D uniquement, cf. [`CLAUDE.md
 | # | Tâche | Statut |
 |---|-------|--------|
 | [06](./06-bibliotheque-motifs.md) | Bibliothèque de motifs (base + communautaire) | Code fait, déploiement en attente |
+| [07](./07-moteur-3d.md) | Moteur 3D (sans rendu) — 1er morceau de la V2 | Fait |
 
 ## Notes par rapport à la liste initiale
 
