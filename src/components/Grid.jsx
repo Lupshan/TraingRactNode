@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 
 const DEFAULT_CELL_SIZE = 16
-const DEAD_COLOR = '#16171d'
-const ALIVE_COLOR = '#c084fc'
+const DEAD_COLOR = '#1c1d24'
+const ALIVE_COLOR = '#a78bfa'
 
 function Grid({ grid, onCellClick, cellSize = DEFAULT_CELL_SIZE }) {
   const canvasRef = useRef(null)

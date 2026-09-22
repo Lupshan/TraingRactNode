@@ -1,10 +1,16 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
+  --text: #52525b;
+  --text-h: #18181b;
+  --bg: #f4f4f5;
+  --surface: #ffffff;
+  --border: #e4e4e7;
+  --accent: #7c3aed;
+  --accent-contrast: #ffffff;
+  --cell-dead: #e4e4e7;
+  --cell-alive: #7c3aed;
 
   font:
-    18px/145% system-ui,
+    16px/1.5 system-ui,
     'Segoe UI',
     Roboto,
     sans-serif;
@@ -19,10 +25,20 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
+    --text: #a1a1aa;
+    --text-h: #f4f4f5;
+    --bg: #0f1014;
+    --surface: #1c1d24;
+    --border: #302f39;
+    --accent: #a78bfa;
+    --accent-contrast: #0f1014;
+    --cell-dead: #26262f;
+    --cell-alive: #a78bfa;
   }
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
@@ -31,5 +47,56 @@ body {
 
 h1 {
   color: var(--text-h);
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+legend {
+  color: var(--text-h);
+  font-weight: 600;
+  padding: 0 6px;
+}
+
+button {
+  font: inherit;
+  color: var(--text-h);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+input[type='number'] {
+  font: inherit;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  width: 4.5em;
+}
+
+input[type='range'] {
+  accent-color: var(--accent);
+}
+
+input[type='checkbox'] {
+  accent-color: var(--accent);
+}
+
+label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
 }
