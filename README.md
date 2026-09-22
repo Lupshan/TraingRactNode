@@ -2,6 +2,8 @@
 
 Simulateur du Jeu de la Vie de Conway en React (voir [`CLAUDE.md`](./CLAUDE.md) pour les specs du projet).
 
+**Démo** : https://game-of-react.pages.dev _(en ligne après la mise en place du déploiement Cloudflare Pages, cf. [`tasks/05`](./tasks/05-cd-deploiement.md))_
+
 ## Stack
 
 Vite + React (JavaScript), rendu Canvas, tests avec Vitest + React Testing Library.
