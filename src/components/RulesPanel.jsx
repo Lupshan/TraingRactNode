@@ -17,34 +17,40 @@ function RulesPanel({ rules, onChange }) {
 
       <div>
         <span>Naissance (B)</span>
-        {NEIGHBOR_COUNTS.map((count) => (
-          <label key={`birth-${count}`}>
-            <input
-              type="checkbox"
-              checked={rules.birth.has(count)}
-              onChange={() => onChange({ ...rules, birth: toggleInSet(rules.birth, count) })}
+        <div className="chip-group">
+          {NEIGHBOR_COUNTS.map((count) => (
+            <button
+              key={`birth-${count}`}
+              type="button"
+              className="chip"
+              aria-pressed={rules.birth.has(count)}
               aria-label={`Naissance à ${count} voisins`}
-            />
-            {count}
-          </label>
-        ))}
+              onClick={() => onChange({ ...rules, birth: toggleInSet(rules.birth, count) })}
+            >
+              {count}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div>
         <span>Survie (S)</span>
-        {NEIGHBOR_COUNTS.map((count) => (
-          <label key={`survive-${count}`}>
-            <input
-              type="checkbox"
-              checked={rules.survive.has(count)}
-              onChange={() =>
+        <div className="chip-group">
+          {NEIGHBOR_COUNTS.map((count) => (
+            <button
+              key={`survive-${count}`}
+              type="button"
+              className="chip"
+              aria-pressed={rules.survive.has(count)}
+              aria-label={`Survie à ${count} voisins`}
+              onClick={() =>
                 onChange({ ...rules, survive: toggleInSet(rules.survive, count) })
               }
-              aria-label={`Survie à ${count} voisins`}
-            />
-            {count}
-          </label>
-        ))}
+            >
+              {count}
+            </button>
+          ))}
+        </div>
       </div>
     </fieldset>
   )

@@ -6,45 +6,51 @@ import Controls from './components/Controls'
 import GridSettings from './components/GridSettings'
 import RulesPanel from './components/RulesPanel'
 
-const DEFAULT_CELL_SIZE = 16
+const CELL_SIZE = 20
 
 function App() {
   const sim = useSimulation({ rows: 30, cols: 30, speed: 200 })
-  const [cellSize, setCellSize] = useState(DEFAULT_CELL_SIZE)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
 
   return (
-    <main className="app">
-      <h1>Jeu de la vie</h1>
+    <div className="app">
+      <div className="grid-viewport">
+        <button
+          type="button"
+          className="sidebar-toggle"
+          onClick={() => setSidebarOpen((open) => !open)}
+          aria-expanded={sidebarOpen}
+          aria-label={sidebarOpen ? 'Masquer les paramètres' : 'Afficher les paramètres'}
+        >
+          {sidebarOpen ? '»' : '«'}
+        </button>
 
-      <div className="layout">
-        <div className="grid-panel">
-          <Grid grid={sim.grid} onCellClick={sim.toggleCell} cellSize={cellSize} />
-        </div>
-
-        <div className="sidebar">
-          <Controls
-            running={sim.running}
-            generation={sim.generation}
-            speed={sim.speed}
-            onStart={sim.start}
-            onPause={sim.pause}
-            onStep={sim.step}
-            onReset={sim.reset}
-            onSpeedChange={sim.setSpeed}
-          />
-
-          <GridSettings
-            rows={sim.grid.length}
-            cols={sim.grid[0]?.length ?? 0}
-            onResizeGrid={sim.resizeGrid}
-            cellSize={cellSize}
-            onCellSizeChange={setCellSize}
-          />
-
-          <RulesPanel rules={sim.rules} onChange={sim.setRules} />
-        </div>
+        <Grid grid={sim.grid} onCellClick={sim.toggleCell} cellSize={CELL_SIZE} />
       </div>
-    </main>
+
+      <aside className={`sidebar${sidebarOpen ? '' : ' sidebar-collapsed'}`}>
+        <h1>Jeu de la vie</h1>
+
+        <Controls
+          running={sim.running}
+          generation={sim.generation}
+          speed={sim.speed}
+          onStart={sim.start}
+          onPause={sim.pause}
+          onStep={sim.step}
+          onReset={sim.reset}
+          onSpeedChange={sim.setSpeed}
+        />
+
+        <GridSettings
+          rows={sim.grid.length}
+          cols={sim.grid[0]?.length ?? 0}
+          onResizeGrid={sim.resizeGrid}
+        />
+
+        <RulesPanel rules={sim.rules} onChange={sim.setRules} />
+      </aside>
+    </div>
   )
 }
 

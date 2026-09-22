@@ -56,11 +56,11 @@ describe('Controls', () => {
     expect(props.onReset).toHaveBeenCalledTimes(1)
   })
 
-  it('calls onSpeedChange with the new value when the slider changes', () => {
+  it('calls onSpeedChange with the new value when the speed input changes', () => {
     const props = renderControls()
 
-    const slider = screen.getByRole('slider')
-    fireEvent.change(slider, { target: { value: '500' } })
+    const speedInput = screen.getByLabelText(/vitesse/i)
+    fireEvent.change(speedInput, { target: { value: '500' } })
 
     expect(props.onSpeedChange).toHaveBeenCalledWith(500)
   })
