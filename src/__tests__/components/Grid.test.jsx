@@ -137,6 +137,55 @@ describe('Grid', () => {
     expect(fillRect).toHaveBeenCalledWith(10, 10, 10, 10)
   })
 
+  it('places the armed pattern instead of painting when stampPattern is set', () => {
+    const grid = [
+      [false, false, false],
+      [false, false, false],
+      [false, false, false],
+    ]
+    const onCellPaint = vi.fn()
+    const onStampPlace = vi.fn()
+    render(
+      <Grid
+        grid={grid}
+        onCellPaint={onCellPaint}
+        minCellSize={10}
+        stampPattern={[[true]]}
+        onStampPlace={onStampPlace}
+      />,
+    )
+
+    const canvas = screen.getByTestId('grid-canvas')
+    fireEvent.mouseDown(canvas, { clientX: 15, clientY: 15 }) // (1,1)
+
+    expect(onStampPlace).toHaveBeenCalledWith(1, 1)
+    expect(onCellPaint).not.toHaveBeenCalled()
+  })
+
+  it('does not start a paint drag while a pattern is armed', () => {
+    const grid = [
+      [false, false],
+      [false, false],
+    ]
+    const onCellPaint = vi.fn()
+    const onStampPlace = vi.fn()
+    render(
+      <Grid
+        grid={grid}
+        onCellPaint={onCellPaint}
+        minCellSize={10}
+        stampPattern={[[true]]}
+        onStampPlace={onStampPlace}
+      />,
+    )
+
+    const canvas = screen.getByTestId('grid-canvas')
+    fireEvent.mouseDown(canvas, { clientX: 5, clientY: 5 })
+    fireEvent.mouseMove(canvas, { clientX: 15, clientY: 5 })
+
+    expect(onCellPaint).not.toHaveBeenCalled()
+  })
+
   it('draws grid lines delimiting each cell', () => {
     const moveTo = vi.fn()
     const lineTo = vi.fn()

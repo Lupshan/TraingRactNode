@@ -6,7 +6,7 @@ const DEAD_COLOR = '#1c1d24'
 const ALIVE_COLOR = '#a78bfa'
 const GRID_LINE_COLOR = 'rgba(255, 255, 255, 0.15)'
 
-function Grid({ grid, onCellPaint, minCellSize = MIN_CELL_SIZE }) {
+function Grid({ grid, onCellPaint, minCellSize = MIN_CELL_SIZE, stampPattern = null, onStampPlace }) {
   const containerRef = useRef(null)
   const canvasRef = useRef(null)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
@@ -91,6 +91,11 @@ function Grid({ grid, onCellPaint, minCellSize = MIN_CELL_SIZE }) {
     const cell = getCellFromEvent(event)
     if (!cell) return
 
+    if (stampPattern) {
+      onStampPlace(cell.row, cell.col)
+      return
+    }
+
     const paintValue = !grid[cell.row][cell.col]
     isPaintingRef.current = true
     paintValueRef.current = paintValue
@@ -120,6 +125,7 @@ function Grid({ grid, onCellPaint, minCellSize = MIN_CELL_SIZE }) {
         height={rows * cellSize}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
+        className={stampPattern ? 'stamp-armed' : undefined}
         aria-label={`Grille ${rows} lignes sur ${cols} colonnes`}
       />
     </div>

@@ -11,6 +11,12 @@ Suivi des tâches nécessaires pour livrer la V1 (2D uniquement, cf. [`CLAUDE.md
 | [04](./04-regles-temps-reel.md) | Modification des règles en temps réel | Fait |
 | [05](./05-cd-deploiement.md) | CD et déploiement V1 | À faire |
 
+## Au-delà de la V1
+
+| # | Tâche | Statut |
+|---|-------|--------|
+| [06](./06-bibliotheque-motifs.md) | Bibliothèque de motifs (base + communautaire) | Code fait, déploiement en attente |
+
 ## Notes par rapport à la liste initiale
 
 - **00 (scaffolding)** ajoutée : le repo ne contenait que `CLAUDE.md`, il faut initialiser le projet (Vite, structure, tooling) avant de pouvoir écrire une CI ou des tests.
