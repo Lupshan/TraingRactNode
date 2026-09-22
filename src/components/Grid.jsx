@@ -1,13 +1,37 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { computeCellSize } from './gridSizing'
 
-const DEFAULT_CELL_SIZE = 16
+const MIN_CELL_SIZE = 20
 const DEAD_COLOR = '#1c1d24'
 const ALIVE_COLOR = '#a78bfa'
+const GRID_LINE_COLOR = 'rgba(255, 255, 255, 0.15)'
 
-function Grid({ grid, onCellClick, cellSize = DEFAULT_CELL_SIZE }) {
+function Grid({ grid, onCellClick, minCellSize = MIN_CELL_SIZE }) {
+  const containerRef = useRef(null)
   const canvasRef = useRef(null)
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
   const rows = grid.length
   const cols = grid[0]?.length ?? 0
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return undefined
+
+    const observer = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect
+      setContainerSize({ width, height })
+    })
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [])
+
+  const cellSize = computeCellSize({
+    containerWidth: containerSize.width,
+    containerHeight: containerSize.height,
+    rows,
+    cols,
+    minCellSize,
+  })
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -24,7 +48,22 @@ function Grid({ grid, onCellClick, cellSize = DEFAULT_CELL_SIZE }) {
         }
       })
     })
-  }, [grid, cellSize])
+
+    ctx.strokeStyle = GRID_LINE_COLOR
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    for (let col = 0; col <= cols; col++) {
+      const x = col * cellSize + 0.5
+      ctx.moveTo(x, 0)
+      ctx.lineTo(x, rows * cellSize)
+    }
+    for (let row = 0; row <= rows; row++) {
+      const y = row * cellSize + 0.5
+      ctx.moveTo(0, y)
+      ctx.lineTo(cols * cellSize, y)
+    }
+    ctx.stroke()
+  }, [grid, cellSize, rows, cols])
 
   function handleClick(event) {
     const rect = canvasRef.current.getBoundingClientRect()
@@ -37,14 +76,16 @@ function Grid({ grid, onCellClick, cellSize = DEFAULT_CELL_SIZE }) {
   }
 
   return (
-    <canvas
-      ref={canvasRef}
-      data-testid="grid-canvas"
-      width={cols * cellSize}
-      height={rows * cellSize}
-      onClick={handleClick}
-      aria-label={`Grille ${rows} lignes sur ${cols} colonnes`}
-    />
+    <div ref={containerRef} className="grid-scroll-area">
+      <canvas
+        ref={canvasRef}
+        data-testid="grid-canvas"
+        width={cols * cellSize}
+        height={rows * cellSize}
+        onClick={handleClick}
+        aria-label={`Grille ${rows} lignes sur ${cols} colonnes`}
+      />
+    </div>
   )
 }
 

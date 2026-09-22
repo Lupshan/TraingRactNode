@@ -6,7 +6,7 @@ import Controls from './components/Controls'
 import GridSettings from './components/GridSettings'
 import RulesPanel from './components/RulesPanel'
 
-const CELL_SIZE = 20
+const MIN_CELL_SIZE = 20
 
 function App() {
   const sim = useSimulation({ rows: 30, cols: 30, speed: 200 })
@@ -14,20 +14,6 @@ function App() {
 
   return (
     <div className="app">
-      <div className="grid-viewport">
-        <button
-          type="button"
-          className="sidebar-toggle"
-          onClick={() => setSidebarOpen((open) => !open)}
-          aria-expanded={sidebarOpen}
-          aria-label={sidebarOpen ? 'Masquer les paramètres' : 'Afficher les paramètres'}
-        >
-          {sidebarOpen ? '»' : '«'}
-        </button>
-
-        <Grid grid={sim.grid} onCellClick={sim.toggleCell} cellSize={CELL_SIZE} />
-      </div>
-
       <aside className={`sidebar${sidebarOpen ? '' : ' sidebar-collapsed'}`}>
         <h1>Jeu de la vie</h1>
 
@@ -50,6 +36,20 @@ function App() {
 
         <RulesPanel rules={sim.rules} onChange={sim.setRules} />
       </aside>
+
+      <div className="grid-viewport">
+        <button
+          type="button"
+          className="sidebar-toggle"
+          onClick={() => setSidebarOpen((open) => !open)}
+          aria-expanded={sidebarOpen}
+          aria-label={sidebarOpen ? 'Masquer les paramètres' : 'Afficher les paramètres'}
+        >
+          {sidebarOpen ? '«' : '»'}
+        </button>
+
+        <Grid grid={sim.grid} onCellClick={sim.toggleCell} minCellSize={MIN_CELL_SIZE} />
+      </div>
     </div>
   )
 }

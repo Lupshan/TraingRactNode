@@ -5,4 +5,17 @@ import '@testing-library/jest-dom/vitest'
 HTMLCanvasElement.prototype.getContext = () => ({
   fillStyle: '',
   fillRect: () => {},
+  strokeStyle: '',
+  lineWidth: 1,
+  beginPath: () => {},
+  moveTo: () => {},
+  lineTo: () => {},
+  stroke: () => {},
 })
+
+// jsdom n'implémente pas non plus ResizeObserver.
+globalThis.ResizeObserver ??= class ResizeObserverStub {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
