@@ -2,17 +2,16 @@
 
 **Plateforme retenue** : Cloudflare Pages.
 
+**Décision** : connexion directe Cloudflare Pages ↔ repo GitHub (build et déploiement gérés par Cloudflare lui-même sur chaque push vers `main`), plutôt qu'un workflow GitHub Actions dédié. Pas de gating CI→déploiement côté Cloudflare : inutile ici puisque la protection de branche sur `main` (task 01) empêche déjà tout commit dont la CI est rouge d'y atteindre. Plus simple, zéro secret à gérer côté GitHub.
+
 ## À faire
 
 - [ ] Créer le projet Cloudflare Pages et le connecter au repo GitHub
-- [ ] Workflow GitHub Actions de déploiement (`.github/workflows/cd.yml`), déclenché sur merge dans `main`, dépendant du succès de la CI (tâche 01) — via l'action `cloudflare/wrangler-action` (ou déploiement direct géré par Cloudflare Pages sur push, à trancher selon simplicité voulue)
-- [ ] Configuration du build de production pour Vite (commande de build, dossier `dist` en sortie) côté Cloudflare Pages
-- [ ] Variables d'environnement / secrets Cloudflare (API token) stockés dans les secrets GitHub Actions si le déploiement passe par la CI
+- [ ] Configuration du build de production pour Vite (commande `npm run build`, dossier `dist` en sortie) côté Cloudflare Pages
 - [ ] Vérifier le déploiement sur l'environnement réel (smoke test manuel post-déploiement)
-- [ ] (Optionnel) Mettre à jour le `README.md` avec le lien vers la démo déployée et les instructions de dev local
+- [ ] Mettre à jour le `README.md` avec le lien vers la démo déployée
 
 ## Definition of done
 
-- Chaque merge dans `main` déclenche un déploiement automatique
+- Chaque push dans `main` déclenche un déploiement automatique (géré par Cloudflare, pas par une CI red qui pourrait de toute façon pas atteindre `main` grâce à la protection de branche)
 - L'app est accessible publiquement à une URL stable
-- Le déploiement échoue proprement (et n'écrase pas la prod) si la CI est rouge
