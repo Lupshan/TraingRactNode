@@ -3,6 +3,7 @@ import {
   createEmptyGrid,
   DEFAULT_RULES,
   nextGeneration,
+  setCellEngine,
   toggleCellEngine,
 } from '../engine/gameOfLife'
 
@@ -63,6 +64,14 @@ export function useSimulation({
     [running],
   )
 
+  const setCell = useCallback(
+    (row, col, alive) => {
+      if (running) return
+      setGrid((current) => setCellEngine(current, row, col, alive))
+    },
+    [running],
+  )
+
   return {
     grid,
     generation,
@@ -75,6 +84,7 @@ export function useSimulation({
     reset,
     resizeGrid,
     toggleCell,
+    setCell,
     setRules,
     setSpeed,
   }

@@ -13,6 +13,12 @@ export function toggleCellEngine(grid, row, col) {
   )
 }
 
+export function setCellEngine(grid, row, col, alive) {
+  return grid.map((rowCells, r) =>
+    r === row ? rowCells.map((cell, c) => (c === col ? alive : cell)) : rowCells,
+  )
+}
+
 export function countLiveNeighbors(grid, row, col) {
   const rows = grid.length
   const cols = grid[0]?.length ?? 0

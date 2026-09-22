@@ -4,6 +4,7 @@ import {
   createEmptyGrid,
   DEFAULT_RULES,
   nextGeneration,
+  setCellEngine,
   toggleCellEngine,
 } from '../../engine/gameOfLife'
 
@@ -50,6 +51,31 @@ describe('toggleCellEngine', () => {
     const next = toggleCellEngine(toggleCellEngine(grid, 0, 0), 0, 0)
 
     expect(next[0][0]).toBe(false)
+  })
+})
+
+describe('setCellEngine', () => {
+  it('sets only the targeted cell to the given state', () => {
+    const grid = createEmptyGrid(2, 2)
+    const next = setCellEngine(grid, 0, 1, true)
+
+    expect(next[0][1]).toBe(true)
+    expect(next[0][0]).toBe(false)
+    expect(next[1].every((cell) => cell === false)).toBe(true)
+  })
+
+  it('does not mutate the original grid', () => {
+    const grid = createEmptyGrid(2, 2)
+    setCellEngine(grid, 0, 0, true)
+
+    expect(grid[0][0]).toBe(false)
+  })
+
+  it('setting the same state twice is idempotent', () => {
+    const grid = createEmptyGrid(2, 2)
+    const next = setCellEngine(setCellEngine(grid, 0, 0, true), 0, 0, true)
+
+    expect(next[0][0]).toBe(true)
   })
 })
 

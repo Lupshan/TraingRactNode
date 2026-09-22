@@ -48,7 +48,7 @@ function App() {
           {sidebarOpen ? '«' : '»'}
         </button>
 
-        <Grid grid={sim.grid} onCellClick={sim.toggleCell} minCellSize={MIN_CELL_SIZE} />
+        <Grid grid={sim.grid} onCellPaint={sim.setCell} minCellSize={MIN_CELL_SIZE} />
       </div>
     </div>
   )

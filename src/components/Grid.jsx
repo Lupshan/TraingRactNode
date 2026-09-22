@@ -6,12 +6,15 @@ const DEAD_COLOR = '#1c1d24'
 const ALIVE_COLOR = '#a78bfa'
 const GRID_LINE_COLOR = 'rgba(255, 255, 255, 0.15)'
 
-function Grid({ grid, onCellClick, minCellSize = MIN_CELL_SIZE }) {
+function Grid({ grid, onCellPaint, minCellSize = MIN_CELL_SIZE }) {
   const containerRef = useRef(null)
   const canvasRef = useRef(null)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
   const rows = grid.length
   const cols = grid[0]?.length ?? 0
+  const isPaintingRef = useRef(false)
+  const paintValueRef = useRef(false)
+  const lastPaintedRef = useRef(null)
 
   useEffect(() => {
     const container = containerRef.current
@@ -65,14 +68,47 @@ function Grid({ grid, onCellClick, minCellSize = MIN_CELL_SIZE }) {
     ctx.stroke()
   }, [grid, cellSize, rows, cols])
 
-  function handleClick(event) {
+  useEffect(() => {
+    function stopPainting() {
+      isPaintingRef.current = false
+      lastPaintedRef.current = null
+    }
+
+    window.addEventListener('mouseup', stopPainting)
+    return () => window.removeEventListener('mouseup', stopPainting)
+  }, [])
+
+  function getCellFromEvent(event) {
     const rect = canvasRef.current.getBoundingClientRect()
     const col = Math.floor((event.clientX - rect.left) / cellSize)
     const row = Math.floor((event.clientY - rect.top) / cellSize)
 
-    if (row >= 0 && row < rows && col >= 0 && col < cols) {
-      onCellClick(row, col)
-    }
+    if (row < 0 || row >= rows || col < 0 || col >= cols) return null
+    return { row, col }
+  }
+
+  function handleMouseDown(event) {
+    const cell = getCellFromEvent(event)
+    if (!cell) return
+
+    const paintValue = !grid[cell.row][cell.col]
+    isPaintingRef.current = true
+    paintValueRef.current = paintValue
+    lastPaintedRef.current = cell
+    onCellPaint(cell.row, cell.col, paintValue)
+  }
+
+  function handleMouseMove(event) {
+    if (!isPaintingRef.current) return
+
+    const cell = getCellFromEvent(event)
+    if (!cell) return
+
+    const last = lastPaintedRef.current
+    if (last && last.row === cell.row && last.col === cell.col) return
+
+    lastPaintedRef.current = cell
+    onCellPaint(cell.row, cell.col, paintValueRef.current)
   }
 
   return (
@@ -82,7 +118,8 @@ function Grid({ grid, onCellClick, minCellSize = MIN_CELL_SIZE }) {
         data-testid="grid-canvas"
         width={cols * cellSize}
         height={rows * cellSize}
-        onClick={handleClick}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
         aria-label={`Grille ${rows} lignes sur ${cols} colonnes`}
       />
     </div>
