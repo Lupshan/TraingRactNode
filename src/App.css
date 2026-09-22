@@ -2,14 +2,101 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 16px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.app > h1 {
+  margin: 0;
+}
+
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
   gap: 20px;
-  padding: 20px;
+  width: 100%;
+}
+
+.grid-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  line-height: 0;
+}
+
+.grid-panel canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: min(360px, 100%);
 }
 
 .controls,
-.grid-settings {
+.grid-settings,
+.rules-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 10px 14px;
+}
+
+.controls {
+  justify-content: space-between;
+}
+
+.controls span {
+  margin-left: auto;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.grid-settings form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+
+.grid-settings > label {
+  width: 100%;
+}
+
+.rules-panel {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.rules-panel > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+
+.rules-panel > div > span {
+  font-weight: 500;
+  color: var(--text-h);
+  width: 100%;
+}
+
+.rules-panel label {
+  font-size: 0.85rem;
 }
