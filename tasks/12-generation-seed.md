@@ -8,6 +8,7 @@ Complète l'item roadmap « génération aléatoire avancée / seeds partageable
 - **Bornes des dimensions tirées fixes**, pas réglables : 10-60 par axe en 2D, 6-20 par axe en 3D (une grille 3D 60×60×60 serait bien trop lourde à simuler/rendre). Le remplissage ne redéfinit pas les bornes de `GridSettings`/`GridSettings3D`, juste la plage dans laquelle une dimension est tirée aléatoirement.
 - Seed acceptée en texte libre (nombre ou mot) — si le champ est laissé vide, une seed numérique est tirée et **réaffichée** dans le champ après génération, pour que l'utilisateur puisse la noter/partager et la rejouer à l'identique.
 - La seed peut **aussi** déterminer les règles B/S (case à cocher « Tirer aussi une règle aléatoire », cochée par défaut) — désactivable pour tester une grille aléatoire avec des règles fixes/déjà réglées à la main.
+- **Bug corrigé après coup** : quand le champ seed était vide, la seed auto-tirée était réécrite dans le champ pour être visible — mais ça la « verrouillait » du même coup, donc spammer le bouton rejouait indéfiniment la même grille au lieu d'en tirer une nouvelle. Un flag `seedIsAuto` distingue maintenant une seed auto-tirée (non « verrouillée » : chaque clic en retire une nouvelle) d'une seed tapée par l'utilisateur (verrouillée : reproductible d'un clic à l'autre, comme documenté).
 
 ## Implémentation
 

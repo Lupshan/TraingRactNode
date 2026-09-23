@@ -56,6 +56,36 @@ describe('RandomFillControls', () => {
     expect(seedUsed).toBeTypeOf('number')
     expect(screen.getByLabelText('Seed')).toHaveValue(String(seedUsed))
   })
+
+  it('draws a new random seed on every click while the field is left untouched (spamming the button)', async () => {
+    const user = userEvent.setup()
+    const onGenerate = vi.fn()
+    render(<RandomFillControls onGenerate={onGenerate} />)
+
+    const button = screen.getByRole('button', { name: /générer aléatoirement/i })
+    await user.click(button)
+    await user.click(button)
+    await user.click(button)
+
+    const seedsUsed = onGenerate.mock.calls.map(([seed]) => seed)
+    // 3 tirages dans [0, 1e9) : une collision est possible en théorie mais
+    // astronomiquement improbable, donc un test fiable en pratique.
+    expect(new Set(seedsUsed).size).toBe(3)
+  })
+
+  it('reuses the exact same seed on every click once the user has typed one (reproducible, not re-rolled)', async () => {
+    const user = userEvent.setup()
+    const onGenerate = vi.fn()
+    render(<RandomFillControls onGenerate={onGenerate} />)
+
+    await user.type(screen.getByLabelText('Seed'), 'ma-seed-fixe')
+    const button = screen.getByRole('button', { name: /générer aléatoirement/i })
+    await user.click(button)
+    await user.click(button)
+
+    const seedsUsed = onGenerate.mock.calls.map(([seed]) => seed)
+    expect(seedsUsed).toEqual(['ma-seed-fixe', 'ma-seed-fixe'])
+  })
 })
 
 // input[type=range] n'est pas bien géré par userEvent.type/clear ; on

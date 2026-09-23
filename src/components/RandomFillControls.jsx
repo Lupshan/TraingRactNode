@@ -17,11 +17,24 @@ function RandomFillControls({ onGenerate }) {
   const [seedText, setSeedText] = useState('')
   const [density, setDensity] = useState(50)
   const [randomizeRules, setRandomizeRules] = useState(true)
+  // Distingue une seed choisie par l'utilisateur (tapée : verrouillée,
+  // reproductible d'un clic à l'autre) d'une seed auto-tirée (le champ
+  // était vide : on la réaffiche pour qu'elle reste consultable/copiable,
+  // mais sans la « verrouiller » — sinon spammer le bouton reproduirait
+  // indéfiniment la même grille au lieu d'en retirer une nouvelle).
+  const [seedIsAuto, setSeedIsAuto] = useState(true)
+
+  function handleSeedChange(event) {
+    setSeedText(event.target.value)
+    setSeedIsAuto(false)
+  }
 
   function handleSubmit(event) {
     event.preventDefault()
-    const seed = seedText.trim() === '' ? randomSeedValue() : seedText
+    const useAuto = seedIsAuto || seedText.trim() === ''
+    const seed = useAuto ? randomSeedValue() : seedText
     setSeedText(String(seed))
+    setSeedIsAuto(useAuto)
     onGenerate(seed, density / 100, randomizeRules)
   }
 
@@ -32,7 +45,7 @@ function RandomFillControls({ onGenerate }) {
         <input
           type="text"
           value={seedText}
-          onChange={(event) => setSeedText(event.target.value)}
+          onChange={handleSeedChange}
           placeholder="ex. 42, ou un mot — vide = seed aléatoire"
         />
       </label>
