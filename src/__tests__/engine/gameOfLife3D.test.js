@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { countLiveNeighbors3D, createEmptyGrid3D, nextGeneration3D } from '../../engine/gameOfLife3D'
+import {
+  countLiveNeighbors3D,
+  createEmptyGrid3D,
+  nextGeneration3D,
+  setCellEngine3D,
+} from '../../engine/gameOfLife3D'
 
 describe('createEmptyGrid3D', () => {
   it('creates a grid of the given dimensions, all dead', () => {
@@ -9,6 +14,31 @@ describe('createEmptyGrid3D', () => {
     expect(grid[0]).toHaveLength(3)
     expect(grid[0][0]).toHaveLength(4)
     expect(grid.flat(2).every((cell) => cell === false)).toBe(true)
+  })
+})
+
+describe('setCellEngine3D', () => {
+  it('sets only the targeted cell to the given state', () => {
+    const grid = createEmptyGrid3D(2, 2, 2)
+    const next = setCellEngine3D(grid, 0, 1, 1, true)
+
+    expect(next[0][1][1]).toBe(true)
+    expect(next[0][0][0]).toBe(false)
+    expect(next[1].flat().every((cell) => cell === false)).toBe(true)
+  })
+
+  it('does not mutate the original grid', () => {
+    const grid = createEmptyGrid3D(2, 2, 2)
+    setCellEngine3D(grid, 0, 0, 0, true)
+
+    expect(grid[0][0][0]).toBe(false)
+  })
+
+  it('setting the same state twice is idempotent', () => {
+    const grid = createEmptyGrid3D(2, 2, 2)
+    const next = setCellEngine3D(setCellEngine3D(grid, 0, 0, 0, true), 0, 0, 0, true)
+
+    expect(next[0][0][0]).toBe(true)
   })
 })
 

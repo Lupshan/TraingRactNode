@@ -17,6 +17,7 @@ Suivi des tâches nécessaires pour livrer la V1 (2D uniquement, cf. [`CLAUDE.md
 |---|-------|--------|
 | [06](./06-bibliotheque-motifs.md) | Bibliothèque de motifs (base + communautaire) | Code fait, déploiement en attente |
 | [07](./07-moteur-3d.md) | Moteur 3D (sans rendu) — 1er morceau de la V2 | Fait |
+| [08](./08-rendu-3d.md) | Rendu 3D (Three.js), bascule 2D/3D — 2e morceau de la V2 | Fait |
 
 ## Notes par rapport à la liste initiale
 
