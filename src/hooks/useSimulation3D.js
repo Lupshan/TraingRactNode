@@ -57,11 +57,14 @@ export function useSimulation3D({
     setGrid(createEmptyGrid3D(nextSizeX, nextSizeY, nextSizeZ))
   }, [])
 
-  const generateRandom = useCallback((seed, density) => {
+  const generateRandom = useCallback((seed, density, randomizeRules = false) => {
     setRunning(false)
     setGeneration(0)
-    const { grid: nextGrid } = generateRandomGrid3D(seed, density)
+    const { grid: nextGrid, rules: nextRules } = generateRandomGrid3D(seed, density, {
+      randomizeRules,
+    })
     setGrid(nextGrid)
+    if (nextRules) setRules(nextRules)
   }, [])
 
   const setCell = useCallback(

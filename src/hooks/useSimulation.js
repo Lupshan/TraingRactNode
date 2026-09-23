@@ -58,11 +58,14 @@ export function useSimulation({
     setGrid(createEmptyGrid(nextRows, nextCols))
   }, [])
 
-  const generateRandom = useCallback((seed, density) => {
+  const generateRandom = useCallback((seed, density, randomizeRules = false) => {
     setRunning(false)
     setGeneration(0)
-    const { grid: nextGrid } = generateRandomGrid2D(seed, density)
+    const { grid: nextGrid, rules: nextRules } = generateRandomGrid2D(seed, density, {
+      randomizeRules,
+    })
     setGrid(nextGrid)
+    if (nextRules) setRules(nextRules)
   }, [])
 
   const toggleCell = useCallback(

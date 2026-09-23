@@ -38,6 +38,6 @@ describe('GridSettings', () => {
     await user.type(screen.getByLabelText('Seed'), 'abc')
     await user.click(screen.getByRole('button', { name: /générer aléatoirement/i }))
 
-    expect(props.onGenerateRandom).toHaveBeenCalledWith('abc', 0.5)
+    expect(props.onGenerateRandom).toHaveBeenCalledWith('abc', 0.5, true)
   })
 })

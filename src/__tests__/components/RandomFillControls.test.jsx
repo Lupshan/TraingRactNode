@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import RandomFillControls from '../../components/RandomFillControls'
 
 describe('RandomFillControls', () => {
-  it('calls onGenerate with the entered seed and the density as a 0-1 fraction', async () => {
+  it('calls onGenerate with the entered seed, the density as a 0-1 fraction, and randomizeRules', async () => {
     const user = userEvent.setup()
     const onGenerate = vi.fn()
     render(<RandomFillControls onGenerate={onGenerate} />)
@@ -12,7 +12,7 @@ describe('RandomFillControls', () => {
     await user.type(screen.getByLabelText('Seed'), 'ma-seed')
     await user.click(screen.getByRole('button', { name: /générer aléatoirement/i }))
 
-    expect(onGenerate).toHaveBeenCalledWith('ma-seed', 0.5)
+    expect(onGenerate).toHaveBeenCalledWith('ma-seed', 0.5, true)
   })
 
   it('defaults the density to 50% and reflects slider changes in the label', async () => {
@@ -28,7 +28,21 @@ describe('RandomFillControls', () => {
     expect(screen.getByText('Densité (80 %)')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /générer aléatoirement/i }))
-    expect(onGenerate).toHaveBeenCalledWith(expect.anything(), 0.8)
+    expect(onGenerate).toHaveBeenCalledWith(expect.anything(), 0.8, true)
+  })
+
+  it('defaults the "also generate rules" checkbox to checked, and unchecking it is passed through', async () => {
+    const user = userEvent.setup()
+    const onGenerate = vi.fn()
+    render(<RandomFillControls onGenerate={onGenerate} />)
+
+    const checkbox = screen.getByRole('checkbox', { name: /tirer aussi une règle aléatoire/i })
+    expect(checkbox).toBeChecked()
+
+    await user.click(checkbox)
+    await user.click(screen.getByRole('button', { name: /générer aléatoirement/i }))
+
+    expect(onGenerate).toHaveBeenCalledWith(expect.anything(), expect.anything(), false)
   })
 
   it('resolves and displays a random seed when the field is left empty', async () => {

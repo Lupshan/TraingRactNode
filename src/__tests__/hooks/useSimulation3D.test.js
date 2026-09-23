@@ -112,6 +112,26 @@ describe('useSimulation3D', () => {
     expect(result.current.grid).toEqual(gridAfterFirstGenerate)
   })
 
+  it('generateRandom leaves the rules untouched when randomizeRules is not set', () => {
+    const { result } = renderHook(() => useSimulation3D({ sizeX: 2, sizeY: 2, sizeZ: 2 }))
+    const initialRules = result.current.rules
+
+    act(() => result.current.generateRandom('ma-seed-3d', 0.5))
+
+    expect(result.current.rules).toBe(initialRules)
+  })
+
+  it('generateRandom also applies a random ruleset when randomizeRules is true', () => {
+    const { result } = renderHook(() => useSimulation3D({ sizeX: 2, sizeY: 2, sizeZ: 2 }))
+    const initialRules = result.current.rules
+
+    act(() => result.current.generateRandom('ma-seed-3d', 0.5, true))
+
+    expect(result.current.rules).not.toBe(initialRules)
+    expect(result.current.rules.birth).toBeInstanceOf(Set)
+    expect(result.current.rules.survive).toBeInstanceOf(Set)
+  })
+
   it('setRules updates the active ruleset', () => {
     const { result } = renderHook(() => useSimulation3D({ sizeX: 2, sizeY: 2, sizeZ: 2 }))
     const newRules = { birth: new Set([2]), survive: new Set([1]) }

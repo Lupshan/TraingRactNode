@@ -90,6 +90,39 @@ describe('generateRandomGrid2D', () => {
 
     expect(grid.flat().every((cell) => cell === true)).toBe(true)
   })
+
+  it('does not draw rules by default (rules is null)', () => {
+    const { rules } = generateRandomGrid2D('any-seed', 0.5)
+
+    expect(rules).toBeNull()
+  })
+
+  it('draws reproducible birth/survive sets within 0-8 when randomizeRules is set', () => {
+    const first = generateRandomGrid2D('rules-seed', 0.5, { randomizeRules: true })
+    const second = generateRandomGrid2D('rules-seed', 0.5, { randomizeRules: true })
+
+    expect(first.rules).not.toBeNull()
+    expect(second.rules.birth).toEqual(first.rules.birth)
+    expect(second.rules.survive).toEqual(first.rules.survive)
+    for (const n of first.rules.birth) {
+      expect(n).toBeGreaterThanOrEqual(0)
+      expect(n).toBeLessThanOrEqual(8)
+    }
+    for (const n of first.rules.survive) {
+      expect(n).toBeGreaterThanOrEqual(0)
+      expect(n).toBeLessThanOrEqual(8)
+    }
+  })
+
+  it('draws different rules than the grid content would suggest (rules affect what cells get drawn)', () => {
+    const withoutRules = generateRandomGrid2D('same-seed', 0.5)
+    const withRules = generateRandomGrid2D('same-seed', 0.5, { randomizeRules: true })
+
+    // les tirages de règles consomment des nombres avant les cellules :
+    // la grille diffère selon que randomizeRules est actif ou non, pour
+    // une même seed.
+    expect(withRules.grid).not.toEqual(withoutRules.grid)
+  })
 })
 
 describe('generateRandomGrid3D', () => {
@@ -113,5 +146,17 @@ describe('generateRandomGrid3D', () => {
     const { grid } = generateRandomGrid3D('any-seed', 0)
 
     expect(grid.flat(2).every((cell) => cell === false)).toBe(true)
+  })
+
+  it('draws reproducible birth/survive sets within 0-26 when randomizeRules is set', () => {
+    const first = generateRandomGrid3D('rules-seed-3d', 0.5, { randomizeRules: true })
+    const second = generateRandomGrid3D('rules-seed-3d', 0.5, { randomizeRules: true })
+
+    expect(first.rules).not.toBeNull()
+    expect(second.rules).toEqual(first.rules)
+    for (const n of [...first.rules.birth, ...first.rules.survive]) {
+      expect(n).toBeGreaterThanOrEqual(0)
+      expect(n).toBeLessThanOrEqual(26)
+    }
   })
 })

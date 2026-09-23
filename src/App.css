@@ -122,6 +122,13 @@
   width: 10em;
 }
 
+.random-fill-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
 .random-fill-hint {
   margin: 0;
   font-size: 0.8rem;
