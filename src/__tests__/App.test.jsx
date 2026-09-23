@@ -63,4 +63,48 @@ describe('App', () => {
 
     expect(screen.getByText(/motif armé/i)).toBeInTheDocument()
   })
+
+  it('switches to the 3D view, showing the 3D grid and its own settings/rules', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: '3D' }))
+
+    // Grid3D est chargé en lazy (Three.js n'est utile qu'en 3D)
+    expect(await screen.findByTestId('grid3d-canvas')).toBeInTheDocument()
+    expect(screen.queryByTestId('grid-canvas')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('X')).toBeInTheDocument()
+    expect(screen.getByLabelText(/naissance/i)).toBeInTheDocument()
+    // la bibliothèque de motifs est spécifique au 2D
+    expect(screen.queryByText(/bibliothèque de motifs/i)).not.toBeInTheDocument()
+  })
+
+  it('resets the grid and stops the simulation when switching dimension', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /start/i }))
+    expect(screen.getByRole('button', { name: /start/i })).toBeDisabled()
+
+    await user.click(screen.getByRole('button', { name: '3D' }))
+    await screen.findByTestId('grid3d-canvas')
+    await user.click(screen.getByRole('button', { name: '2D' }))
+
+    expect(screen.getByRole('button', { name: /start/i })).not.toBeDisabled()
+    expect(screen.getByText('Génération : 0')).toBeInTheDocument()
+  })
+
+  it('cancels an armed 2D pattern when switching to 3D', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByText('Bloc'))
+    expect(screen.getByText(/motif armé/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: '3D' }))
+    await screen.findByTestId('grid3d-canvas')
+    await user.click(screen.getByRole('button', { name: '2D' }))
+
+    expect(screen.queryByText(/motif armé/i)).not.toBeInTheDocument()
+  })
 })

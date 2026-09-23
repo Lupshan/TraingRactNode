@@ -13,9 +13,7 @@ Premier morceau de la V2 (mode 3D, roadmap du `CLAUDE.md`). Périmètre volontai
 - [x] `src/engine/neighborRanges.js` : parseur/sérialiseur de la notation d'intervalles, testé (parsing tolérant, round-trip, tri, dédoublonnage)
 - [x] `src/engine/gameOfLife3D.js` : `createEmptyGrid3D`, `countLiveNeighbors3D` (voisinage de Moore 26, bords morts vérifiés explicitement — pas de wraparound), `nextGeneration3D`, `DEFAULT_RULES_3D`
 - [x] Règle par défaut vérifiée par simulation, pas recopiée à l'aveugle
-- [ ] Rendu Three.js / react-three-fiber (tâche suivante)
-- [ ] Bascule 2D/3D dans l'UI, réinitialisation de la grille et du moteur au changement de dimension (tâche suivante)
-- [ ] Panneau de règles 3D (saisie par intervalles) branché à `useSimulation` (tâche suivante)
+- [x] Rendu Three.js / react-three-fiber, bascule 2D/3D et panneau de règles 3D → [tâche 08](./08-rendu-3d.md)
 
 ## Definition of done
 

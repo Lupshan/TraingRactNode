@@ -15,6 +15,14 @@ export function createEmptyGrid3D(sizeX, sizeY, sizeZ) {
   )
 }
 
+export function setCellEngine3D(grid, x, y, z, alive) {
+  return grid.map((plane, xi) =>
+    xi === x
+      ? plane.map((row, yi) => (yi === y ? row.map((cell, zi) => (zi === z ? alive : cell)) : row))
+      : plane,
+  )
+}
+
 export function countLiveNeighbors3D(grid, x, y, z) {
   const sizeX = grid.length
   const sizeY = grid[0]?.length ?? 0

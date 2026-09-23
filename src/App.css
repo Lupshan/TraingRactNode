@@ -249,3 +249,36 @@
 .stamp-armed {
   cursor: crosshair;
 }
+
+.dimension-toggle {
+  align-self: flex-start;
+}
+
+.rules-panel-3d label {
+  justify-content: space-between;
+}
+
+.rules-panel-3d input[type='text'] {
+  flex: 1;
+  min-width: 0;
+  margin-left: 8px;
+}
+
+.grid3d-viewport {
+  width: 100%;
+  height: 100%;
+}
+
+.grid3d-viewport canvas {
+  display: block;
+  outline: none;
+}
+
+.grid3d-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--text);
+}
