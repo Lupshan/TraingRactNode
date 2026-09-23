@@ -8,7 +8,7 @@ Deuxième et dernier morceau de la V2 (mode 3D). Branché sur le moteur de la [t
 - Contour filaire de la grille via `THREE.EdgesGeometry` (pas un simple `wireframe: true` sur le mesh, qui dessinerait aussi les diagonales internes des triangles de chaque face — repéré et corrigé après une première capture d'écran qui montrait des croix parasites sur les faces).
 - Bascule 2D/3D non temps réel (cf. `CLAUDE.md`) : réinitialise la grille et le moteur **des deux dimensions** à chaque changement, jamais seulement celle qu'on quitte — comportement volontairement testé (`App.test.jsx`) plutôt que supposé.
 - `Three.js`/`@react-three/fiber`/`@react-three/drei` chargés en lazy (`React.lazy` + `Suspense`) : ces libs pèsent ~900 Ko, inutiles pour les visiteurs qui restent en 2D. Le bundle principal reste à ~239 Ko (proche de son poids avant la V2) ; le chunk 3D ne se télécharge qu'au clic sur "3D".
-- Pas d'édition manuelle de cellule en 3D dans cette tâche (pas de raycasting clic → cellule) : `setCell` existe déjà dans `useSimulation3D`/`gameOfLife3D` (symétrique du 2D) mais rien ne l'appelle encore depuis l'UI. Périmètre extensible plus tard si besoin.
+- Pas d'édition manuelle de cellule en 3D dans cette tâche (pas de raycasting clic → cellule) : `setCell` existe déjà dans `useSimulation3D`/`gameOfLife3D` (symétrique du 2D) mais rien ne l'appelle encore depuis l'UI. Ajouté dans la [tâche 09](./09-edition-3d.md), la grille vide sans aucun moyen de l'éditer s'étant révélée bloquante à l'usage.
 - Panneau de règles 3D en saisie libre par intervalles (`"1, 4, 6-11, 24"`, cf. tâche 07), appliqué en temps réel comme le panneau 2D ; le panneau 2D (chips) n'est pas touché.
 
 ## À faire

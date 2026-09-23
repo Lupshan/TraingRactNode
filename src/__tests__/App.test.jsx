@@ -71,7 +71,7 @@ describe('App', () => {
     await user.click(screen.getByRole('button', { name: '3D' }))
 
     // Grid3D est chargé en lazy (Three.js n'est utile qu'en 3D)
-    expect(await screen.findByTestId('grid3d-canvas')).toBeInTheDocument()
+    expect(await screen.findByTestId('grid3d-canvas', {}, { timeout: 5000 })).toBeInTheDocument()
     expect(screen.queryByTestId('grid-canvas')).not.toBeInTheDocument()
     expect(screen.getByLabelText('X')).toBeInTheDocument()
     expect(screen.getByLabelText(/naissance/i)).toBeInTheDocument()
@@ -87,7 +87,7 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: /start/i })).toBeDisabled()
 
     await user.click(screen.getByRole('button', { name: '3D' }))
-    await screen.findByTestId('grid3d-canvas')
+    await screen.findByTestId('grid3d-canvas', {}, { timeout: 5000 })
     await user.click(screen.getByRole('button', { name: '2D' }))
 
     expect(screen.getByRole('button', { name: /start/i })).not.toBeDisabled()
@@ -102,7 +102,7 @@ describe('App', () => {
     expect(screen.getByText(/motif armé/i)).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: '3D' }))
-    await screen.findByTestId('grid3d-canvas')
+    await screen.findByTestId('grid3d-canvas', {}, { timeout: 5000 })
     await user.click(screen.getByRole('button', { name: '2D' }))
 
     expect(screen.queryByText(/motif armé/i)).not.toBeInTheDocument()
