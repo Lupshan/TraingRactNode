@@ -19,7 +19,8 @@ Suivi des tâches nécessaires pour livrer la V1 (2D uniquement, cf. [`CLAUDE.md
 | [07](./07-moteur-3d.md) | Moteur 3D (sans rendu) — 1er morceau de la V2 | Fait |
 | [08](./08-rendu-3d.md) | Rendu 3D (Three.js), bascule 2D/3D — 2e morceau de la V2 | Fait |
 | [09](./09-edition-3d.md) | Édition manuelle de cellule en 3D (clic sur une face) | Fait |
-| [10](./10-mode-fantome-3d.md) | Mode fantôme (édition de l'intérieur de la grille 3D) | Fait |
+| [10](./10-mode-fantome-3d.md) | Mode fantôme (édition de l'intérieur de la grille 3D) | Remplacée par la 11 |
+| [11](./11-ciblage-survol-tuto-mort.md) | Ciblage 3D au survol + molette, tutoriel, ligne « Mort » dérivée | Fait |
 
 ## Notes par rapport à la liste initiale
 

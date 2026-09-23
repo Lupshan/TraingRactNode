@@ -50,4 +50,19 @@ describe('RulesPanel3D', () => {
     const lastCall = onChange.mock.calls.at(-1)[0]
     expect(lastCall.survive).toEqual(new Set([5, 6, 7]))
   })
+
+  it('derives the death field from the complement of survive, over 0-26', () => {
+    renderRulesPanel3D({ birth: new Set([6]), survive: new Set([5, 6, 7]) })
+
+    const deadInput = screen.getByLabelText(/mort/i)
+    expect(deadInput).toHaveValue('0-4, 8-26')
+    expect(deadInput).toBeDisabled()
+  })
+
+  it('derives an empty death field when survive already covers 0-26', () => {
+    const fullRange = new Set(Array.from({ length: 27 }, (_, i) => i))
+    renderRulesPanel3D({ birth: new Set(), survive: fullRange })
+
+    expect(screen.getByLabelText(/mort/i)).toHaveValue('')
+  })
 })

@@ -108,20 +108,31 @@ describe('App', () => {
     expect(screen.queryByText(/motif armé/i)).not.toBeInTheDocument()
   })
 
-  it('toggles ghost mode and shows the hint only while active', async () => {
+  it('opens and closes the help modal, without the 3D section while in 2D', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    expect(screen.queryByText(/règles de naissance et de survie/i)).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Aide' }))
+
+    expect(screen.getByText(/règles de naissance et de survie/i)).toBeInTheDocument()
+    expect(screen.queryByText(/éditer la grille en 3d/i)).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: "Fermer l'aide" }))
+
+    expect(screen.queryByText(/règles de naissance et de survie/i)).not.toBeInTheDocument()
+  })
+
+  it('shows the 3D targeting instructions in the help modal while in 3D', async () => {
     const user = userEvent.setup()
     render(<App />)
 
     await user.click(screen.getByRole('button', { name: '3D' }))
     await screen.findByTestId('grid3d-canvas', {}, { timeout: 5000 })
 
-    const toggle = screen.getByRole('button', { name: /mode fantôme/i })
-    expect(toggle).toHaveAttribute('aria-pressed', 'false')
-    expect(screen.queryByText(/re-clique au même endroit/i)).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Aide' }))
 
-    await user.click(toggle)
-
-    expect(toggle).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByText(/re-clique au même endroit/i)).toBeInTheDocument()
+    expect(screen.getByText(/éditer la grille en 3d/i)).toBeInTheDocument()
   })
 })

@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { parseNeighborRanges, serializeNeighborRanges } from '../../engine/neighborRanges'
+import {
+  complementRange,
+  parseNeighborRanges,
+  serializeNeighborRanges,
+} from '../../engine/neighborRanges'
 
 describe('parseNeighborRanges', () => {
   it('parses a mix of single numbers and ranges', () => {
@@ -62,5 +66,27 @@ describe('serializeNeighborRanges', () => {
   it('round-trips through parseNeighborRanges', () => {
     const original = '1, 4, 6-11, 24'
     expect(serializeNeighborRanges(parseNeighborRanges(original))).toBe(original)
+  })
+})
+
+describe('complementRange', () => {
+  it('returns every value in [0, max] not in the given set', () => {
+    expect(complementRange(new Set([2, 3]), 8)).toEqual(new Set([0, 1, 4, 5, 6, 7, 8]))
+  })
+
+  it('returns the full range for an empty set', () => {
+    expect(complementRange(new Set(), 3)).toEqual(new Set([0, 1, 2, 3]))
+  })
+
+  it('returns an empty set when the input already covers the whole range', () => {
+    expect(complementRange(new Set([0, 1, 2, 3]), 3)).toEqual(new Set())
+  })
+
+  it('is the exact inverse of the input over the same range', () => {
+    const survive = new Set([2, 3])
+    const dead = complementRange(survive, 8)
+    for (let n = 0; n <= 8; n++) {
+      expect(dead.has(n)).toBe(!survive.has(n))
+    }
   })
 })

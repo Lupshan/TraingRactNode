@@ -9,6 +9,7 @@ import GridSettings3D from './components/GridSettings3D'
 import RulesPanel from './components/RulesPanel'
 import RulesPanel3D from './components/RulesPanel3D'
 import PatternLibrary from './components/PatternLibrary'
+import HelpModal from './components/HelpModal'
 
 // Three.js/react-three-fiber ne sont utiles qu'en mode 3D (bascule non
 // temps réel, cf. CLAUDE.md) ; on les charge à la demande pour ne pas
@@ -23,7 +24,7 @@ function App() {
   const [dimension, setDimension] = useState('2d')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [armedPattern, setArmedPattern] = useState(null)
-  const [ghostMode, setGhostMode] = useState(false)
+  const [helpOpen, setHelpOpen] = useState(false)
 
   const sim = dimension === '2d' ? sim2D : sim3D
 
@@ -65,7 +66,17 @@ function App() {
   return (
     <div className="app">
       <aside className={`sidebar${sidebarOpen ? '' : ' sidebar-collapsed'}`}>
-        <h1>Jeu de la vie</h1>
+        <div className="sidebar-header">
+          <h1>Jeu de la vie</h1>
+          <button
+            type="button"
+            className="chip help-button"
+            onClick={() => setHelpOpen(true)}
+            aria-label="Aide"
+          >
+            ?
+          </button>
+        </div>
 
         <div
           className="dimension-toggle chip-group"
@@ -128,21 +139,6 @@ function App() {
             />
 
             <RulesPanel3D rules={sim3D.rules} onChange={sim3D.setRules} />
-
-            <button
-              type="button"
-              className="chip ghost-mode-toggle"
-              aria-pressed={ghostMode}
-              onClick={() => setGhostMode((mode) => !mode)}
-            >
-              Mode fantôme {ghostMode ? '(activé)' : '(désactivé)'}
-            </button>
-            {ghostMode && (
-              <p className="ghost-mode-hint">
-                Cellules semi-transparentes : re-clique au même endroit pour
-                avancer d'une cellule vers l'intérieur.
-              </p>
-            )}
           </>
         )}
       </aside>
@@ -174,14 +170,16 @@ function App() {
               <div className="grid3d-loading">Chargement du rendu 3D…</div>
             }
           >
-            <Grid3D
-              grid={sim3D.grid}
-              onToggleCell={sim3D.setCell}
-              ghostMode={ghostMode}
-            />
+            <Grid3D grid={sim3D.grid} onToggleCell={sim3D.setCell} />
           </Suspense>
         )}
       </div>
+
+      <HelpModal
+        open={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        dimension={dimension}
+      />
     </div>
   )
 }

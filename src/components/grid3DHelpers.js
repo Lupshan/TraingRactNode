@@ -109,3 +109,49 @@ export function computeRayGridPath({
 
   return path
 }
+
+export function cellsEqual(a, b) {
+  if (a === b) return true
+  if (!a || !b) return false
+  return a.x === b.x && a.y === b.y && a.z === b.z
+}
+
+// Détermine la profondeur à prévisualiser au survol de la grille : reprend
+// la profondeur précédente si le pointeur n'a presque pas bougé à l'écran
+// (on affine la même cible, éventuellement avancée à la molette), repart
+// de la couche externe (index 0, sous la face survolée) sinon — le
+// pointeur vise alors un nouvel endroit.
+export function nextHoverTrack(previousTrack, screenPos, path, sameSpotThresholdPx) {
+  const samePlace =
+    previousTrack &&
+    Math.hypot(
+      screenPos.x - previousTrack.screenPos.x,
+      screenPos.y - previousTrack.screenPos.y,
+    ) <= sameSpotThresholdPx
+
+  const depthIndex = samePlace
+    ? Math.min(previousTrack.depthIndex, path.length - 1)
+    : 0
+
+  return { screenPos, path, depthIndex }
+}
+
+// Avance (deltaY > 0) ou recule (deltaY < 0) d'une cellule le long du
+// trajet survolé, sans dépasser ses bornes (couche externe / couche la
+// plus profonde).
+export function stepHoverDepth(track, deltaY) {
+  const step = deltaY > 0 ? 1 : -1
+  const depthIndex = Math.min(
+    Math.max(track.depthIndex + step, 0),
+    track.path.length - 1,
+  )
+  return { ...track, depthIndex }
+}
+
+// Différencie un clic (édite la cellule prévisualisée) d'un glisser (fait
+// tourner la vue via OrbitControls) : mesure la distance parcourue à
+// l'écran entre l'appui et le relâchement du pointeur.
+export function isClick(downPos, upPos, thresholdPx) {
+  const distance = Math.hypot(upPos.x - downPos.x, upPos.y - downPos.y)
+  return distance <= thresholdPx
+}

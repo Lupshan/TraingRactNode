@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { parseNeighborRanges, serializeNeighborRanges } from '../engine/neighborRanges'
+import { complementRange, parseNeighborRanges, serializeNeighborRanges } from '../engine/neighborRanges'
+
+const MAX_NEIGHBORS_3D = 26
 
 // En 3D le voisinage va de 0 à 26 : des chips individuelles (comme en 2D,
 // qui n'en a que 9) ne tiendraient pas à l'écran. On saisit à la place une
@@ -20,6 +22,8 @@ function RulesPanel3D({ rules, onChange }) {
     setSurviveText(text)
     onChange({ ...rules, survive: parseNeighborRanges(text) })
   }
+
+  const deadText = serializeNeighborRanges(complementRange(rules.survive, MAX_NEIGHBORS_3D))
 
   return (
     <fieldset className="rules-panel rules-panel-3d">
@@ -46,6 +50,21 @@ function RulesPanel3D({ rules, onChange }) {
           aria-label="Survie : nombres de voisins et intervalles"
         />
       </label>
+
+      <label>
+        Mort (M)
+        <input
+          type="text"
+          value={deadText}
+          disabled
+          readOnly
+          aria-label="Mort : nombres de voisins et intervalles, déduits automatiquement"
+        />
+      </label>
+      <p className="rules-derived-hint">
+        Déduit de « Survie » : une cellule vivante meurt à tous les voisinages où elle ne
+        survit pas.
+      </p>
     </fieldset>
   )
 }

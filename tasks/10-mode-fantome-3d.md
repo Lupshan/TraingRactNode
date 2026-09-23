@@ -1,3 +1,5 @@
+> **Remplacé par la [tâche 11](./11-ciblage-survol-tuto-mort.md)** : le mode fantôme (cellules semi-transparentes + re-clic au même endroit) a été jugé peu lisible à l'usage et remplacé par un aperçu au survol + profondeur réglable à la molette. Les fonctions pures `intersectRayBox`/`computeRayGridPath` documentées ci-dessous restent inchangées et réutilisées telles quelles.
+
 # 10 — Mode fantôme : atteindre l'intérieur de la grille 3D
 
 Complète les [tâches 08](./08-rendu-3d.md)/[09](./09-edition-3d.md) : le clic sur une face ne permet d'éditer que la couche externe exposée ("Limite acceptée" de la tâche 09). L'utilisateur a demandé comment remplir l'intérieur du cube — décision : bouton "Mode fantôme" (option choisie face à un mode coupe/tranche navigable).
