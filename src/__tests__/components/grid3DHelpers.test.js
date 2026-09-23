@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import {
+  cellsEqual,
   centerOffset,
   computeRayGridPath,
   getAliveCellPositions,
   intersectRayBox,
+  isClick,
+  nextHoverTrack,
+  stepHoverDepth,
 } from '../../components/grid3DHelpers'
 
 function grid3DFrom(coords, sizeX, sizeY, sizeZ) {
@@ -193,5 +197,100 @@ describe('computeRayGridPath', () => {
       expect(Math.abs(path[i].y - path[i - 1].y)).toBeLessThanOrEqual(1)
       expect(Math.abs(path[i].z - path[i - 1].z)).toBeLessThanOrEqual(1)
     }
+  })
+})
+
+describe('cellsEqual', () => {
+  it('returns true for the same object reference', () => {
+    const cell = { x: 1, y: 2, z: 3 }
+    expect(cellsEqual(cell, cell)).toBe(true)
+  })
+
+  it('returns true for two different objects with the same coordinates', () => {
+    expect(cellsEqual({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 3 })).toBe(true)
+  })
+
+  it('returns false when a coordinate differs', () => {
+    expect(cellsEqual({ x: 1, y: 2, z: 3 }, { x: 1, y: 2, z: 4 })).toBe(false)
+  })
+
+  it('returns false when either cell is null', () => {
+    expect(cellsEqual(null, { x: 1, y: 2, z: 3 })).toBe(false)
+    expect(cellsEqual({ x: 1, y: 2, z: 3 }, null)).toBe(false)
+    expect(cellsEqual(null, null)).toBe(true)
+  })
+})
+
+describe('nextHoverTrack', () => {
+  const path = [
+    { x: 2, y: 1, z: 1 },
+    { x: 1, y: 1, z: 1 },
+    { x: 0, y: 1, z: 1 },
+  ]
+
+  it('starts at the outer layer (depth 0) with no previous track', () => {
+    const track = nextHoverTrack(null, { x: 100, y: 100 }, path, 8)
+    expect(track).toEqual({ screenPos: { x: 100, y: 100 }, path, depthIndex: 0 })
+  })
+
+  it('resets to the outer layer when the pointer jumps to a new spot', () => {
+    const previous = { screenPos: { x: 100, y: 100 }, path, depthIndex: 2 }
+    const track = nextHoverTrack(previous, { x: 200, y: 100 }, path, 8)
+    expect(track.depthIndex).toBe(0)
+  })
+
+  it('keeps the previous depth when the pointer barely moved', () => {
+    const previous = { screenPos: { x: 100, y: 100 }, path, depthIndex: 2 }
+    const track = nextHoverTrack(previous, { x: 103, y: 100 }, path, 8)
+    expect(track.depthIndex).toBe(2)
+  })
+
+  it('clamps the kept depth to the new (shorter) path length', () => {
+    const previous = { screenPos: { x: 100, y: 100 }, path, depthIndex: 2 }
+    const shorterPath = [{ x: 2, y: 1, z: 1 }]
+    const track = nextHoverTrack(previous, { x: 100, y: 100 }, shorterPath, 8)
+    expect(track.depthIndex).toBe(0)
+  })
+})
+
+describe('stepHoverDepth', () => {
+  const path = [
+    { x: 2, y: 1, z: 1 },
+    { x: 1, y: 1, z: 1 },
+    { x: 0, y: 1, z: 1 },
+  ]
+
+  it('advances one cell deeper when scrolling down', () => {
+    const track = { screenPos: { x: 0, y: 0 }, path, depthIndex: 0 }
+    expect(stepHoverDepth(track, 1).depthIndex).toBe(1)
+  })
+
+  it('goes back one cell when scrolling up', () => {
+    const track = { screenPos: { x: 0, y: 0 }, path, depthIndex: 1 }
+    expect(stepHoverDepth(track, -1).depthIndex).toBe(0)
+  })
+
+  it('clamps at the outer layer', () => {
+    const track = { screenPos: { x: 0, y: 0 }, path, depthIndex: 0 }
+    expect(stepHoverDepth(track, -1).depthIndex).toBe(0)
+  })
+
+  it('clamps at the deepest layer', () => {
+    const track = { screenPos: { x: 0, y: 0 }, path, depthIndex: path.length - 1 }
+    expect(stepHoverDepth(track, 1).depthIndex).toBe(path.length - 1)
+  })
+})
+
+describe('isClick', () => {
+  it('is a click when the pointer barely moved', () => {
+    expect(isClick({ x: 100, y: 100 }, { x: 102, y: 100 }, 5)).toBe(true)
+  })
+
+  it('is not a click when the pointer moved past the threshold (a drag/rotate)', () => {
+    expect(isClick({ x: 100, y: 100 }, { x: 120, y: 100 }, 5)).toBe(false)
+  })
+
+  it('treats the exact threshold distance as a click', () => {
+    expect(isClick({ x: 0, y: 0 }, { x: 5, y: 0 }, 5)).toBe(true)
   })
 })

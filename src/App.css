@@ -62,6 +62,22 @@
   font-size: 1.25rem;
 }
 
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.help-button {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
 .controls,
 .grid-settings,
 .rules-panel {
@@ -312,15 +328,70 @@
   color: var(--text);
 }
 
-.ghost-mode-toggle {
-  align-self: flex-start;
+.help-modal {
+  max-width: 480px;
+  width: calc(100% - 32px);
+  max-height: calc(100vh - 64px);
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text-h);
 }
 
-.ghost-mode-hint {
+.help-modal::backdrop {
+  background: rgb(0 0 0 / 50%);
+}
+
+.help-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  overflow-y: auto;
+  max-height: calc(100vh - 64px);
+}
+
+.help-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.help-modal-header h2 {
   margin: 0;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: var(--accent);
-  color: var(--accent-contrast);
-  font-size: 0.85rem;
+  font-size: 1.1rem;
+}
+
+.help-modal-close {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0;
+  border-radius: 999px;
+}
+
+.help-modal-content h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.help-modal-content p {
+  margin: 0 0 8px;
+}
+
+.help-modal-content ul {
+  margin: 0;
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.help-modal-content code {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
 }
