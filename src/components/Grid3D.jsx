@@ -2,15 +2,24 @@ import { useEffect, useMemo, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
-import { centerOffset, getAliveCellPositions, resolveCellFromBoxFaceHit } from './grid3DHelpers'
+import {
+  centerOffset,
+  computeRayGridPath,
+  getAliveCellPositions,
+} from './grid3DHelpers'
 
 const CELL_SIZE = 0.85
 const ALIVE_COLOR = '#a78bfa'
+const GHOST_OPACITY = 0.35
 const GRID_HELPER_COLOR = '#605f6c'
 // Différencie un clic (édite une cellule) d'un glisser (fait tourner la
 // vue via OrbitControls) : en dessous de ce seuil de déplacement entre
 // pointerdown et pointerup, on considère qu'il n'y a pas eu de rotation.
 const CLICK_DRAG_THRESHOLD_PX = 5
+// En mode fantôme, re-cliquer à moins de cette distance du clic précédent
+// avance d'une cellule le long du même trajet plutôt que d'en recalculer
+// un nouveau — permet d'atteindre l'intérieur de la grille clic par clic.
+const SAME_SPOT_THRESHOLD_PX = 8
 
 // Ni onClick seul (qui se déclenche aussi après un glisser de rotation,
 // R3F ne fait pas la distinction) ni une dépendance à OrbitControls pour
@@ -28,7 +37,10 @@ function useClickNotDrag(onValidClick) {
       pointerDownPos.current = null
       if (!down) return
 
-      const distance = Math.hypot(event.clientX - down.x, event.clientY - down.y)
+      const distance = Math.hypot(
+        event.clientX - down.x,
+        event.clientY - down.y,
+      )
       if (distance > CLICK_DRAG_THRESHOLD_PX) return
 
       onValidClick(event)
@@ -36,7 +48,7 @@ function useClickNotDrag(onValidClick) {
   }
 }
 
-function InstancedCells({ grid, offset }) {
+function InstancedCells({ grid, offset, ghostMode }) {
   const meshRef = useRef(null)
   const sizeX = grid.length
   const sizeY = grid[0]?.length ?? 0
@@ -66,7 +78,12 @@ function InstancedCells({ grid, offset }) {
       frustumCulled={false}
     >
       <boxGeometry args={[CELL_SIZE, CELL_SIZE, CELL_SIZE]} />
-      <meshStandardMaterial color={ALIVE_COLOR} />
+      <meshStandardMaterial
+        color={ALIVE_COLOR}
+        transparent={ghostMode}
+        opacity={ghostMode ? GHOST_OPACITY : 1}
+        depthWrite={!ghostMode}
+      />
     </instancedMesh>
   )
 }
@@ -90,22 +107,55 @@ function GridWireframe({ sizeX, sizeY, sizeZ }) {
 // Boîte invisible superposée au contour de la grille, seule cible de
 // raycast pour l'édition (les petits cubes des cellules vivantes, plus
 // en retrait, ne sont jamais la surface la plus proche de la caméra à
-// cet endroit — cette boîte les intercepterait de toute façon). On lit
-// donc l'état réel de la grille à la position visée pour savoir s'il
-// faut l'allumer ou l'éteindre, plutôt que de dépendre de quel mesh le
-// rayon a effectivement touché.
-function GridClickTarget({ grid, sizeX, sizeY, sizeZ, offset, onToggleCell }) {
+// cet endroit — cette boîte les intercepterait de toute façon). On
+// calcule le trajet complet du rayon à travers la grille et on lit
+// l'état réel de la cellule visée pour savoir s'il faut l'allumer ou
+// l'éteindre, plutôt que de dépendre de quel mesh le rayon a
+// effectivement touché.
+//
+// Hors mode fantôme, seule la première cellule du trajet (la couche
+// externe) est utilisée — équivalent à un simple clic sur la face. En
+// mode fantôme, re-cliquer au même endroit avance d'une cellule le long
+// du trajet, ce qui permet d'atteindre l'intérieur de la grille.
+function GridClickTarget({
+  grid,
+  sizeX,
+  sizeY,
+  sizeZ,
+  offset,
+  ghostMode,
+  onToggleCell,
+}) {
+  const lastClickRef = useRef(null)
+
   const clickHandlers = useClickNotDrag((event) => {
-    if (!event.face) return
+    if (!event.ray) return
     event.stopPropagation()
-    const cell = resolveCellFromBoxFaceHit({
-      point: event.point,
-      normal: event.face.normal,
+
+    const path = computeRayGridPath({
+      origin: event.ray.origin,
+      direction: event.ray.direction,
       sizeX,
       sizeY,
       sizeZ,
       offset,
     })
+    if (path.length === 0) return
+
+    const screenPos = { x: event.clientX, y: event.clientY }
+    const last = lastClickRef.current
+    const sameSpot =
+      ghostMode &&
+      last &&
+      Math.hypot(
+        screenPos.x - last.screenPos.x,
+        screenPos.y - last.screenPos.y,
+      ) <= SAME_SPOT_THRESHOLD_PX
+
+    const depthIndex = sameSpot ? (last.depthIndex + 1) % path.length : 0
+    lastClickRef.current = { screenPos, depthIndex }
+
+    const cell = path[depthIndex]
     const alreadyAlive = grid[cell.x]?.[cell.y]?.[cell.z] ?? false
     onToggleCell(cell.x, cell.y, cell.z, !alreadyAlive)
   })
@@ -118,19 +168,27 @@ function GridClickTarget({ grid, sizeX, sizeY, sizeZ, offset, onToggleCell }) {
   )
 }
 
-function Grid3D({ grid, onToggleCell }) {
+function Grid3D({ grid, onToggleCell, ghostMode = false }) {
   const sizeX = grid.length
   const sizeY = grid[0]?.length ?? 0
   const sizeZ = grid[0]?.[0]?.length ?? 0
-  const offset = useMemo(() => centerOffset(sizeX, sizeY, sizeZ), [sizeX, sizeY, sizeZ])
+  const offset = useMemo(
+    () => centerOffset(sizeX, sizeY, sizeZ),
+    [sizeX, sizeY, sizeZ],
+  )
   const cameraDistance = Math.max(sizeX, sizeY, sizeZ, 1) * 1.8 + 4
 
   return (
     <div className="grid3d-viewport" data-testid="grid3d-canvas">
-      <Canvas camera={{ position: [cameraDistance, cameraDistance, cameraDistance], fov: 50 }}>
+      <Canvas
+        camera={{
+          position: [cameraDistance, cameraDistance, cameraDistance],
+          fov: 50,
+        }}
+      >
         <ambientLight intensity={0.6} />
         <directionalLight position={[10, 15, 10]} intensity={0.8} />
-        <InstancedCells grid={grid} offset={offset} />
+        <InstancedCells grid={grid} offset={offset} ghostMode={ghostMode} />
         <GridWireframe sizeX={sizeX} sizeY={sizeY} sizeZ={sizeZ} />
         <GridClickTarget
           grid={grid}
@@ -138,6 +196,7 @@ function Grid3D({ grid, onToggleCell }) {
           sizeY={sizeY}
           sizeZ={sizeZ}
           offset={offset}
+          ghostMode={ghostMode}
           onToggleCell={onToggleCell}
         />
         <OrbitControls target={[0, 0, 0]} />

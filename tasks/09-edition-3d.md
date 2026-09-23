@@ -2,7 +2,7 @@
 
 Complète la [tâche 08](./08-rendu-3d.md) : la grille 3D démarrait vide sans aucun moyen de la peupler depuis l'UI (`setCell` existait déjà dans le moteur mais rien ne l'appelait). Repéré par l'utilisateur en testant le rendu ("on a qu'un seul cube" — le contour de la grille, aucune cellule).
 
-**Décision (choisie parmi deux options proposées)** : clic sur une face pour activer/désactiver la cellule à cet endroit, plutôt qu'un système de tranche/couche navigable façon scanner. Limite acceptée : on ne peut viser que ce qui est à la surface exposée du cube, pas une cellule cachée au milieu sans d'abord dégager les couches autour.
+**Décision (choisie parmi deux options proposées)** : clic sur une face pour activer/désactiver la cellule à cet endroit, plutôt qu'un système de tranche/couche navigable façon scanner. Limite acceptée : on ne peut viser que ce qui est à la surface exposée du cube, pas une cellule cachée au milieu sans d'abord dégager les couches autour — complété par le mode fantôme de la [tâche 10](./10-mode-fantome-3d.md), l'utilisateur ayant demandé comment remplir l'intérieur du cube.
 
 ## Implémentation
 
