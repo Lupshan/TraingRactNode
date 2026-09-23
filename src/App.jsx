@@ -144,7 +144,7 @@ function App() {
           />
         ) : (
           <Suspense fallback={<div className="grid3d-loading">Chargement du rendu 3D…</div>}>
-            <Grid3D grid={sim3D.grid} />
+            <Grid3D grid={sim3D.grid} onToggleCell={sim3D.setCell} />
           </Suspense>
         )}
       </div>
