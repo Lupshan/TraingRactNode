@@ -107,4 +107,21 @@ describe('App', () => {
 
     expect(screen.queryByText(/motif armé/i)).not.toBeInTheDocument()
   })
+
+  it('toggles ghost mode and shows the hint only while active', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: '3D' }))
+    await screen.findByTestId('grid3d-canvas', {}, { timeout: 5000 })
+
+    const toggle = screen.getByRole('button', { name: /mode fantôme/i })
+    expect(toggle).toHaveAttribute('aria-pressed', 'false')
+    expect(screen.queryByText(/re-clique au même endroit/i)).not.toBeInTheDocument()
+
+    await user.click(toggle)
+
+    expect(toggle).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByText(/re-clique au même endroit/i)).toBeInTheDocument()
+  })
 })

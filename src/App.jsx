@@ -23,6 +23,7 @@ function App() {
   const [dimension, setDimension] = useState('2d')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [armedPattern, setArmedPattern] = useState(null)
+  const [ghostMode, setGhostMode] = useState(false)
 
   const sim = dimension === '2d' ? sim2D : sim3D
 
@@ -52,7 +53,11 @@ function App() {
       if (!armedPattern) return
       const height = armedPattern.cells.length
       const width = armedPattern.cells[0]?.length ?? 0
-      sim2D.stampPattern(row - Math.floor(height / 2), col - Math.floor(width / 2), armedPattern.cells)
+      sim2D.stampPattern(
+        row - Math.floor(height / 2),
+        col - Math.floor(width / 2),
+        armedPattern.cells,
+      )
     },
     [armedPattern, sim2D],
   )
@@ -62,7 +67,11 @@ function App() {
       <aside className={`sidebar${sidebarOpen ? '' : ' sidebar-collapsed'}`}>
         <h1>Jeu de la vie</h1>
 
-        <div className="dimension-toggle chip-group" role="group" aria-label="Dimension de la simulation">
+        <div
+          className="dimension-toggle chip-group"
+          role="group"
+          aria-label="Dimension de la simulation"
+        >
           <button
             type="button"
             className="chip"
@@ -119,6 +128,21 @@ function App() {
             />
 
             <RulesPanel3D rules={sim3D.rules} onChange={sim3D.setRules} />
+
+            <button
+              type="button"
+              className="chip ghost-mode-toggle"
+              aria-pressed={ghostMode}
+              onClick={() => setGhostMode((mode) => !mode)}
+            >
+              Mode fantôme {ghostMode ? '(activé)' : '(désactivé)'}
+            </button>
+            {ghostMode && (
+              <p className="ghost-mode-hint">
+                Cellules semi-transparentes : re-clique au même endroit pour
+                avancer d'une cellule vers l'intérieur.
+              </p>
+            )}
           </>
         )}
       </aside>
@@ -129,7 +153,9 @@ function App() {
           className="sidebar-toggle"
           onClick={() => setSidebarOpen((open) => !open)}
           aria-expanded={sidebarOpen}
-          aria-label={sidebarOpen ? 'Masquer les paramètres' : 'Afficher les paramètres'}
+          aria-label={
+            sidebarOpen ? 'Masquer les paramètres' : 'Afficher les paramètres'
+          }
         >
           {sidebarOpen ? '«' : '»'}
         </button>
@@ -143,8 +169,16 @@ function App() {
             onStampPlace={handleStampPlace}
           />
         ) : (
-          <Suspense fallback={<div className="grid3d-loading">Chargement du rendu 3D…</div>}>
-            <Grid3D grid={sim3D.grid} onToggleCell={sim3D.setCell} />
+          <Suspense
+            fallback={
+              <div className="grid3d-loading">Chargement du rendu 3D…</div>
+            }
+          >
+            <Grid3D
+              grid={sim3D.grid}
+              onToggleCell={sim3D.setCell}
+              ghostMode={ghostMode}
+            />
           </Suspense>
         )}
       </div>

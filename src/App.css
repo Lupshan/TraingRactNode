@@ -282,3 +282,16 @@
   height: 100%;
   color: var(--text);
 }
+
+.ghost-mode-toggle {
+  align-self: flex-start;
+}
+
+.ghost-mode-hint {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 0.85rem;
+}
