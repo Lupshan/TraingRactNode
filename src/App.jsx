@@ -118,6 +118,7 @@ function App() {
               rows={sim2D.grid.length}
               cols={sim2D.grid[0]?.length ?? 0}
               onResizeGrid={sim2D.resizeGrid}
+              onGenerateRandom={sim2D.generateRandom}
             />
 
             <RulesPanel rules={sim2D.rules} onChange={sim2D.setRules} />
@@ -136,6 +137,7 @@ function App() {
               sizeY={sim3D.grid[0]?.length ?? 0}
               sizeZ={sim3D.grid[0]?.[0]?.length ?? 0}
               onResizeGrid={sim3D.resizeGrid}
+              onGenerateRandom={sim3D.generateRandom}
             />
 
             <RulesPanel3D rules={sim3D.rules} onChange={sim3D.setRules} />

@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import RandomFillControls from './RandomFillControls'
 
-function GridSettings3D({ sizeX, sizeY, sizeZ, onResizeGrid }) {
+function GridSettings3D({ sizeX, sizeY, sizeZ, onResizeGrid, onGenerateRandom }) {
   const [pendingX, setPendingX] = useState(sizeX)
   const [pendingY, setPendingY] = useState(sizeY)
   const [pendingZ, setPendingZ] = useState(sizeZ)
@@ -42,6 +43,8 @@ function GridSettings3D({ sizeX, sizeY, sizeZ, onResizeGrid }) {
         </label>
         <button type="submit">Redimensionner la grille</button>
       </form>
+
+      <RandomFillControls onGenerate={onGenerateRandom} />
     </div>
   )
 }

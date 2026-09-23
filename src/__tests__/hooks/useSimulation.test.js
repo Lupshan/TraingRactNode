@@ -129,6 +129,23 @@ describe('useSimulation', () => {
     expect(result.current.generation).toBe(0)
   })
 
+  it('generateRandom replaces the grid with a reproducible random one and resets the run state', () => {
+    const { result } = renderHook(() => useSimulation({ rows: 2, cols: 2 }))
+
+    act(() => result.current.start())
+    act(() => result.current.step())
+    act(() => result.current.generateRandom('ma-seed', 0.5))
+
+    const gridAfterFirstGenerate = result.current.grid
+    expect(result.current.running).toBe(false)
+    expect(result.current.generation).toBe(0)
+    // dimensions tirées par la seed, plus les 2x2 initiaux
+    expect(gridAfterFirstGenerate.length).toBeGreaterThan(0)
+
+    act(() => result.current.generateRandom('ma-seed', 0.5))
+    expect(result.current.grid).toEqual(gridAfterFirstGenerate)
+  })
+
   it('setRules updates the active ruleset', () => {
     const { result } = renderHook(() => useSimulation({ rows: 2, cols: 2 }))
     const newRules = { birth: new Set([2]), survive: new Set([1]) }
