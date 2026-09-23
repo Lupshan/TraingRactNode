@@ -46,3 +46,15 @@ export function serializeNeighborRanges(set) {
 
   return parts.join(', ')
 }
+
+// Complémentaire d'un ensemble de voisins sur [0, max] : sert à afficher
+// une ligne "Mort" dérivée de "Survie" (les voisinages qui ne font pas
+// survivre une cellule vivante la font mourir, par définition — pas
+// besoin de la saisir séparément, juste de la rendre visible).
+export function complementRange(set, max) {
+  const complement = new Set()
+  for (let n = 0; n <= max; n++) {
+    if (!set.has(n)) complement.add(n)
+  }
+  return complement
+}

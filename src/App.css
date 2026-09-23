@@ -136,6 +136,35 @@
   font-weight: 600;
 }
 
+.chip-readonly {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  color: var(--text-h);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: default;
+}
+
+.chip-readonly[data-active='true'] {
+  background: color-mix(in srgb, #ef4444 20%, var(--surface));
+  border-color: #ef4444;
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.rules-derived-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text);
+  width: 100%;
+}
+
+.rules-panel-3d input:disabled {
+  opacity: 0.6;
+}
+
 .pattern-library {
   border: 1px solid var(--border);
   border-radius: 12px;

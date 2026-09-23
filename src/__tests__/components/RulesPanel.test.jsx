@@ -58,4 +58,19 @@ describe('RulesPanel', () => {
       survive: new Set([2]),
     })
   })
+
+  it('derives the death row from the complement of survive', () => {
+    renderRulesPanel({ birth: new Set([3]), survive: new Set([2, 3]) })
+
+    expect(screen.getByLabelText('Mort à 2 voisins : non')).toBeInTheDocument()
+    expect(screen.getByLabelText('Mort à 3 voisins : non')).toBeInTheDocument()
+    expect(screen.getByLabelText('Mort à 0 voisins : oui')).toBeInTheDocument()
+    expect(screen.getByLabelText('Mort à 8 voisins : oui')).toBeInTheDocument()
+  })
+
+  it('does not render the death row as clickable buttons', () => {
+    renderRulesPanel({ birth: new Set([3]), survive: new Set([2, 3]) })
+
+    expect(screen.queryByRole('button', { name: /^Mort à/ })).not.toBeInTheDocument()
+  })
 })
