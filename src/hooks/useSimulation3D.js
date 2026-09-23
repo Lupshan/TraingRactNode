@@ -5,6 +5,7 @@ import {
   nextGeneration3D,
   setCellEngine3D,
 } from '../engine/gameOfLife3D'
+import { generateRandomGrid3D } from '../engine/randomGrid'
 
 const DEFAULT_SIZE = 12
 const DEFAULT_SPEED_MS = 300
@@ -56,6 +57,16 @@ export function useSimulation3D({
     setGrid(createEmptyGrid3D(nextSizeX, nextSizeY, nextSizeZ))
   }, [])
 
+  const generateRandom = useCallback((seed, density, randomizeRules = false) => {
+    setRunning(false)
+    setGeneration(0)
+    const { grid: nextGrid, rules: nextRules } = generateRandomGrid3D(seed, density, {
+      randomizeRules,
+    })
+    setGrid(nextGrid)
+    if (nextRules) setRules(nextRules)
+  }, [])
+
   const setCell = useCallback(
     (x, y, z, alive) => {
       if (running) return
@@ -75,6 +86,7 @@ export function useSimulation3D({
     step,
     reset,
     resizeGrid,
+    generateRandom,
     setCell,
     setRules,
     setSpeed,

@@ -9,6 +9,7 @@ function renderGridSettings3D(overrides = {}) {
     sizeY: 10,
     sizeZ: 10,
     onResizeGrid: vi.fn(),
+    onGenerateRandom: vi.fn(),
     ...overrides,
   }
   render(<GridSettings3D {...props} />)
@@ -32,5 +33,15 @@ describe('GridSettings3D', () => {
     await user.click(screen.getByRole('button', { name: /redimensionner/i }))
 
     expect(props.onResizeGrid).toHaveBeenCalledWith(5, 8, 12)
+  })
+
+  it('renders the random fill controls, wired to onGenerateRandom', async () => {
+    const user = userEvent.setup()
+    const props = renderGridSettings3D()
+
+    await user.type(screen.getByLabelText('Seed'), 'abc')
+    await user.click(screen.getByRole('button', { name: /générer aléatoirement/i }))
+
+    expect(props.onGenerateRandom).toHaveBeenCalledWith('abc', 0.5, true)
   })
 })

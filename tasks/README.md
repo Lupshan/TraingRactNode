@@ -21,6 +21,7 @@ Suivi des tâches nécessaires pour livrer la V1 (2D uniquement, cf. [`CLAUDE.md
 | [09](./09-edition-3d.md) | Édition manuelle de cellule en 3D (clic sur une face) | Fait |
 | [10](./10-mode-fantome-3d.md) | Mode fantôme (édition de l'intérieur de la grille 3D) | Remplacée par la 11 |
 | [11](./11-ciblage-survol-tuto-mort.md) | Ciblage 3D au survol + molette, tutoriel, ligne « Mort » dérivée | Fait |
+| [12](./12-generation-seed.md) | Génération aléatoire reproductible (seed), dimensions + remplissage | Fait |
 
 ## Notes par rapport à la liste initiale
 

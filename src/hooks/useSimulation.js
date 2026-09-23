@@ -7,6 +7,7 @@ import {
   stampPatternEngine,
   toggleCellEngine,
 } from '../engine/gameOfLife'
+import { generateRandomGrid2D } from '../engine/randomGrid'
 
 const DEFAULT_ROWS = 30
 const DEFAULT_COLS = 30
@@ -57,6 +58,16 @@ export function useSimulation({
     setGrid(createEmptyGrid(nextRows, nextCols))
   }, [])
 
+  const generateRandom = useCallback((seed, density, randomizeRules = false) => {
+    setRunning(false)
+    setGeneration(0)
+    const { grid: nextGrid, rules: nextRules } = generateRandomGrid2D(seed, density, {
+      randomizeRules,
+    })
+    setGrid(nextGrid)
+    if (nextRules) setRules(nextRules)
+  }, [])
+
   const toggleCell = useCallback(
     (row, col) => {
       if (running) return
@@ -92,6 +103,7 @@ export function useSimulation({
     step,
     reset,
     resizeGrid,
+    generateRandom,
     toggleCell,
     setCell,
     stampPattern,
