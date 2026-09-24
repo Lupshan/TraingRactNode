@@ -1,9 +1,9 @@
-import { useState } from 'react'
 import RandomFillControls from './RandomFillControls'
+import { useSyncedState } from '../hooks/useSyncedState'
 
 function GridSettings({ rows, cols, onResizeGrid, onGenerateRandom }) {
-  const [pendingRows, setPendingRows] = useState(rows)
-  const [pendingCols, setPendingCols] = useState(cols)
+  const [pendingRows, setPendingRows] = useSyncedState(rows)
+  const [pendingCols, setPendingCols] = useSyncedState(cols)
 
   function handleApply(event) {
     event.preventDefault()
