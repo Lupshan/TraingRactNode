@@ -58,3 +58,14 @@ export function complementRange(set, max) {
   }
   return complement
 }
+
+// Égalité par contenu (pas par référence) : sert à détecter si un champ
+// de saisie de règles reflète toujours ce que l'utilisateur a tapé, ou si
+// les règles ont changé pour une autre raison (cf. RulesPanel3D).
+export function neighborSetsEqual(a, b) {
+  if (a.size !== b.size) return false
+  for (const value of a) {
+    if (!b.has(value)) return false
+  }
+  return true
+}

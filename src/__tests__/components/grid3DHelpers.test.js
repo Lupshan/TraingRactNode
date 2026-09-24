@@ -3,10 +3,13 @@ import {
   cellsEqual,
   centerOffset,
   computeRayGridPath,
+  createTargetingSession,
   getAliveCellPositions,
   intersectRayBox,
   isClick,
-  nextHoverTrack,
+  isSameSpot,
+  pointerThreshold,
+  resolveTargetingSession,
   stepHoverDepth,
 } from '../../components/grid3DHelpers'
 
@@ -221,35 +224,102 @@ describe('cellsEqual', () => {
   })
 })
 
-describe('nextHoverTrack', () => {
-  const path = [
-    { x: 2, y: 1, z: 1 },
-    { x: 1, y: 1, z: 1 },
-    { x: 0, y: 1, z: 1 },
-  ]
-
-  it('starts at the outer layer (depth 0) with no previous track', () => {
-    const track = nextHoverTrack(null, { x: 100, y: 100 }, path, 8)
-    expect(track).toEqual({ screenPos: { x: 100, y: 100 }, path, depthIndex: 0 })
+describe('isSameSpot', () => {
+  it('is true for two nearly identical positions', () => {
+    expect(isSameSpot({ x: 100, y: 100 }, { x: 103, y: 100 }, 8)).toBe(true)
   })
 
-  it('resets to the outer layer when the pointer jumps to a new spot', () => {
-    const previous = { screenPos: { x: 100, y: 100 }, path, depthIndex: 2 }
-    const track = nextHoverTrack(previous, { x: 200, y: 100 }, path, 8)
-    expect(track.depthIndex).toBe(0)
+  it('is false once the distance exceeds the threshold', () => {
+    expect(isSameSpot({ x: 100, y: 100 }, { x: 200, y: 100 }, 8)).toBe(false)
   })
 
-  it('keeps the previous depth when the pointer barely moved', () => {
-    const previous = { screenPos: { x: 100, y: 100 }, path, depthIndex: 2 }
-    const track = nextHoverTrack(previous, { x: 103, y: 100 }, path, 8)
-    expect(track.depthIndex).toBe(2)
+  it('treats the exact threshold distance as the same spot', () => {
+    expect(isSameSpot({ x: 0, y: 0 }, { x: 8, y: 0 }, 8)).toBe(true)
+  })
+})
+
+describe('createTargetingSession', () => {
+  const sizeX = 3
+  const sizeY = 3
+  const sizeZ = 3
+  const offset = centerOffset(sizeX, sizeY, sizeZ)
+  const straightThroughRay = {
+    origin: { x: 10, y: 0, z: 0 },
+    direction: { x: -1, y: 0, z: 0 },
+  }
+
+  it('freezes the ray path at the moment of creation, starting at the outer layer', () => {
+    const session = createTargetingSession({ x: 100, y: 100 }, straightThroughRay, {
+      sizeX,
+      sizeY,
+      sizeZ,
+      offset,
+    })
+
+    expect(session.anchorPos).toEqual({ x: 100, y: 100 })
+    expect(session.depthIndex).toBe(0)
+    expect(session.path).toEqual([
+      { x: 2, y: 1, z: 1 },
+      { x: 1, y: 1, z: 1 },
+      { x: 0, y: 1, z: 1 },
+    ])
   })
 
-  it('clamps the kept depth to the new (shorter) path length', () => {
-    const previous = { screenPos: { x: 100, y: 100 }, path, depthIndex: 2 }
-    const shorterPath = [{ x: 2, y: 1, z: 1 }]
-    const track = nextHoverTrack(previous, { x: 100, y: 100 }, shorterPath, 8)
-    expect(track.depthIndex).toBe(0)
+  it('returns null when the ray misses the grid entirely', () => {
+    const missedRay = { origin: { x: 10, y: 50, z: 0 }, direction: { x: -1, y: 0, z: 0 } }
+    const session = createTargetingSession({ x: 0, y: 0 }, missedRay, {
+      sizeX,
+      sizeY,
+      sizeZ,
+      offset,
+    })
+
+    expect(session).toBeNull()
+  })
+})
+
+describe('resolveTargetingSession', () => {
+  const sizeX = 3
+  const sizeY = 3
+  const sizeZ = 3
+  const offset = centerOffset(sizeX, sizeY, sizeZ)
+  const gridDims = { sizeX, sizeY, sizeZ, offset }
+  const ray = { origin: { x: 10, y: 0, z: 0 }, direction: { x: -1, y: 0, z: 0 } }
+
+  it('freezes a brand new session when there is no existing one', () => {
+    const result = resolveTargetingSession(null, { x: 100, y: 100 }, ray, 8, gridDims)
+
+    expect(result.isNew).toBe(true)
+    expect(result.session).not.toBeNull()
+    expect(result.session.depthIndex).toBe(0)
+  })
+
+  it('keeps the existing session untouched (no recompute) when still aiming at the same spot', () => {
+    const existing = { anchorPos: { x: 100, y: 100 }, path: [{ x: 9, y: 9, z: 9 }], depthIndex: 2 }
+
+    const result = resolveTargetingSession(existing, { x: 104, y: 100 }, ray, 8, gridDims)
+
+    expect(result.isNew).toBe(false)
+    expect(result.session).toBe(existing)
+  })
+
+  it('freezes a new session once the target moves past the threshold', () => {
+    const existing = { anchorPos: { x: 100, y: 100 }, path: [{ x: 9, y: 9, z: 9 }], depthIndex: 2 }
+
+    const result = resolveTargetingSession(existing, { x: 200, y: 100 }, ray, 8, gridDims)
+
+    expect(result.isNew).toBe(true)
+    expect(result.session).not.toBe(existing)
+    expect(result.session.depthIndex).toBe(0)
+  })
+
+  it('returns a null session when the new ray misses the grid', () => {
+    const missedRay = { origin: { x: 10, y: 50, z: 0 }, direction: { x: -1, y: 0, z: 0 } }
+
+    const result = resolveTargetingSession(null, { x: 0, y: 0 }, missedRay, 8, gridDims)
+
+    expect(result.isNew).toBe(true)
+    expect(result.session).toBeNull()
   })
 })
 
@@ -292,5 +362,20 @@ describe('isClick', () => {
 
   it('treats the exact threshold distance as a click', () => {
     expect(isClick({ x: 0, y: 0 }, { x: 5, y: 0 }, 5)).toBe(true)
+  })
+})
+
+describe('pointerThreshold', () => {
+  it('uses the touch threshold for a touch pointer', () => {
+    expect(pointerThreshold('touch', 5, 15)).toBe(15)
+  })
+
+  it('uses the mouse threshold for a mouse pointer', () => {
+    expect(pointerThreshold('mouse', 5, 15)).toBe(5)
+  })
+
+  it('uses the mouse threshold for any other/unknown pointer type', () => {
+    expect(pointerThreshold('pen', 5, 15)).toBe(5)
+    expect(pointerThreshold(undefined, 5, 15)).toBe(5)
   })
 })

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   complementRange,
+  neighborSetsEqual,
   parseNeighborRanges,
   serializeNeighborRanges,
 } from '../../engine/neighborRanges'
@@ -88,5 +89,23 @@ describe('complementRange', () => {
     for (let n = 0; n <= 8; n++) {
       expect(dead.has(n)).toBe(!survive.has(n))
     }
+  })
+})
+
+describe('neighborSetsEqual', () => {
+  it('is true for two different Set instances with the same content', () => {
+    expect(neighborSetsEqual(new Set([1, 2, 3]), new Set([3, 2, 1]))).toBe(true)
+  })
+
+  it('is true for the same empty set', () => {
+    expect(neighborSetsEqual(new Set(), new Set())).toBe(true)
+  })
+
+  it('is false when sizes differ', () => {
+    expect(neighborSetsEqual(new Set([1, 2]), new Set([1, 2, 3]))).toBe(false)
+  })
+
+  it('is false when sizes match but contents differ', () => {
+    expect(neighborSetsEqual(new Set([1, 2]), new Set([1, 3]))).toBe(false)
   })
 })

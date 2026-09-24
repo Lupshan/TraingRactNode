@@ -55,6 +55,7 @@ function HelpModal({ open, onClose, dimension }) {
           {dimension === '3d' && (
             <section>
               <h3>Éditer la grille en 3D</h3>
+              <p>À la souris :</p>
               <ul>
                 <li>
                   Survole une face du cube : la cellule visée s'affiche en
@@ -71,6 +72,26 @@ function HelpModal({ open, onClose, dimension }) {
                 </li>
                 <li>
                   Glisse la souris pour faire tourner la vue — ça ne modifie
+                  pas la grille.
+                </li>
+              </ul>
+              <p>Au tactile :</p>
+              <ul>
+                <li>
+                  Tape une fois sur une face : la cellule visée s'affiche en
+                  surbrillance, sous cette face.
+                </li>
+                <li>
+                  Tape à nouveau au même endroit pour avancer l'aperçu d'une
+                  cellule vers l'intérieur du cube, autant de fois que
+                  nécessaire.
+                </li>
+                <li>
+                  Arrête de taper une ou deux secondes pour valider la
+                  cellule actuellement prévisualisée.
+                </li>
+                <li>
+                  Glisse le doigt pour faire tourner la vue — ça ne modifie
                   pas la grille.
                 </li>
               </ul>
