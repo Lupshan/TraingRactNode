@@ -116,36 +116,56 @@ export function cellsEqual(a, b) {
   return a.x === b.x && a.y === b.y && a.z === b.z
 }
 
-// Détermine la profondeur à prévisualiser au survol de la grille : reprend
-// la profondeur précédente si le pointeur n'a presque pas bougé à l'écran
-// (on affine la même cible, éventuellement avancée à la molette), repart
-// de la couche externe (index 0, sous la face survolée) sinon — le
-// pointeur vise alors un nouvel endroit.
-export function nextHoverTrack(previousTrack, screenPos, path, sameSpotThresholdPx) {
-  const samePlace =
-    previousTrack &&
-    Math.hypot(
-      screenPos.x - previousTrack.screenPos.x,
-      screenPos.y - previousTrack.screenPos.y,
-    ) <= sameSpotThresholdPx
+// Vrai si deux positions écran sont assez proches pour être considérées
+// comme « le même endroit visé » plutôt qu'un nouveau point sur la face.
+export function isSameSpot(a, b, thresholdPx) {
+  return Math.hypot(a.x - b.x, a.y - b.y) <= thresholdPx
+}
 
-  const depthIndex = samePlace
-    ? Math.min(previousTrack.depthIndex, path.length - 1)
-    : 0
+// Fige une session de ciblage : calcule le trajet du rayon une seule fois
+// (couche externe en premier) et ne le recalcule plus jamais tant qu'on
+// vise le même endroit (cf. isSameSpot, côté appelant) — la colonne x/y
+// visée reste ainsi rigoureusement fixe, seule la profondeur (l'index
+// dans ce trajet déjà calculé) peut ensuite changer, à la molette ou au
+// tap. Corrige un bug où la cellule visée pouvait glisser d'une colonne
+// voisine quand le rayon était recalculé à chaque micro-mouvement du
+// pointeur (main pas parfaitement immobile pendant qu'on scrolle).
+export function createTargetingSession(anchorPos, ray, { sizeX, sizeY, sizeZ, offset }) {
+  const path = computeRayGridPath({
+    origin: ray.origin,
+    direction: ray.direction,
+    sizeX,
+    sizeY,
+    sizeZ,
+    offset,
+  })
+  if (path.length === 0) return null
 
-  return { screenPos, path, depthIndex }
+  return { anchorPos, path, depthIndex: 0 }
 }
 
 // Avance (deltaY > 0) ou recule (deltaY < 0) d'une cellule le long du
-// trajet survolé, sans dépasser ses bornes (couche externe / couche la
-// plus profonde).
-export function stepHoverDepth(track, deltaY) {
+// trajet figé de la session, sans dépasser ses bornes (couche externe /
+// couche la plus profonde).
+export function stepHoverDepth(session, deltaY) {
   const step = deltaY > 0 ? 1 : -1
   const depthIndex = Math.min(
-    Math.max(track.depthIndex + step, 0),
-    track.path.length - 1,
+    Math.max(session.depthIndex + step, 0),
+    session.path.length - 1,
   )
-  return { ...track, depthIndex }
+  return { ...session, depthIndex }
+}
+
+// Décide s'il faut continuer la session de ciblage existante (même
+// trajet, jamais recalculé) ou en figer une nouvelle à partir du rayon
+// donné — seule la décision (pas l'écriture dans une ref) : le composant
+// appelant se charge de persister le résultat.
+export function resolveTargetingSession(existingSession, screenPos, ray, thresholdPx, gridDims) {
+  if (existingSession && isSameSpot(screenPos, existingSession.anchorPos, thresholdPx)) {
+    return { session: existingSession, isNew: false }
+  }
+
+  return { session: createTargetingSession(screenPos, ray, gridDims), isNew: true }
 }
 
 // Différencie un clic (édite la cellule prévisualisée) d'un glisser (fait
@@ -154,4 +174,11 @@ export function stepHoverDepth(track, deltaY) {
 export function isClick(downPos, upPos, thresholdPx) {
   const distance = Math.hypot(upPos.x - downPos.x, upPos.y - downPos.y)
   return distance <= thresholdPx
+}
+
+// Un doigt est moins précis qu'une souris/un stylet : seuils de
+// tolérance plus larges pour le tactile (glisser vs. taper, et « même
+// endroit visé » d'un tap à l'autre).
+export function pointerThreshold(pointerType, mouseThresholdPx, touchThresholdPx) {
+  return pointerType === 'touch' ? touchThresholdPx : mouseThresholdPx
 }
